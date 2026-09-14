@@ -369,3 +369,33 @@ experiments:
     unit_tests_passed: 35
   conclusion: 'The plain-PyTorch SSM is AMD/ROCm stable, smaller, faster, and lower-memory, but its validation loss is worse than GRU-0001; retain GRU for quality and preserve SSM as an efficiency comparison.'
   next_action: 'Advance to P20 vision specialist from scratch after GitHub merge and synchronization.'
+- id: P20-VISION-20260914
+  date: '2026-09-14'
+  hypothesis: 'A small scratch-trained patch/Transformer vision encoder can learn a deterministic standalone image task on held-out images before multimodal fusion.'
+  git_commit: b0f865a
+  parent_experiment: P19-SSM-20260914
+  dataset: docs/dataset-cards/procedural-shapes-v1.md
+  dataset_hash: ce68e799bd3bef9064badbf3852739a795fa85903db6f0ce650d39f0e263c6e4
+  tokenizer_hash: null
+  model_config: configs/models/vision.yaml
+  training_config: configs/models/vision.yaml
+  seed: 1337
+  status: passed
+  metrics:
+    samples: 480
+    train_samples: 288
+    validation_samples: 96
+    test_samples: 96
+    parameter_count: 9860
+    training_steps: 80
+    start_loss: 1.6190468073
+    final_loss: 0.0068803239
+    validation_loss: 0.0065082586
+    validation_accuracy: 1.0
+    images_per_second: 858.3098885
+    peak_memory_bytes: 169977344
+    checkpoint_sha256: 5d2af341dd67376a65afff6c222dde40aae07e2f1b9cd8968e6cfa079d707bf2
+    external_download: false
+    unit_tests_passed: 37
+  conclusion: 'The random-initialized patch/Transformer vision encoder learned the procedural four-class image task with 1.0 VALIDATION accuracy; TEST remains reserved for a frozen evaluation.'
+  next_action: 'Advance to P21 image-text representation alignment after GitHub merge and synchronization.'

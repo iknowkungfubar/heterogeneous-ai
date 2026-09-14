@@ -58,6 +58,7 @@ from hai.models.transformer_smoke import (
     load_model_config,
     train_model,
 )
+from hai.models.vision import VisionError, data_verify, evaluate_vision, train_vision
 from hai.retrieval.engine import (
     RetrievalError,
     build_index,
@@ -347,6 +348,17 @@ def main() -> int:
     benchmark_mamba.add_argument("--config", type=Path, default=Path("configs/models/ssm.yaml"))
     benchmark_mamba.add_argument("--against", required=True)
     benchmark_mamba.add_argument("--steps", type=int, default=100)
+    vision = sub.add_parser("vision", help="train and evaluate a scratch vision specialist")
+    vision_sub = vision.add_subparsers(dest="vision_command", required=True)
+    vision_verify = vision_sub.add_parser(
+        "data-verify", help="verify procedural image data provenance"
+    )
+    vision_verify.add_argument("--config", type=Path, default=Path("configs/models/vision.yaml"))
+    vision_train = vision_sub.add_parser("train", help="train the vision specialist from scratch")
+    vision_train.add_argument("--config", type=Path, default=Path("configs/models/vision.yaml"))
+    vision_evaluate = vision_sub.add_parser("evaluate", help="evaluate vision on held-out images")
+    vision_evaluate.add_argument("--config", type=Path, default=Path("configs/models/vision.yaml"))
+    vision_evaluate.add_argument("--split", choices=("validation", "test"), default="validation")
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
@@ -485,6 +497,26 @@ def main() -> int:
             )
             print(json.dumps(result, indent=2, sort_keys=True))
         except (StateSpaceError, OSError, KeyError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
+        return 0
+    if args.command == "vision":
+        try:
+            if args.vision_command == "data-verify":
+                result = data_verify(args.config)
+            elif args.vision_command == "train":
+                result = train_vision(args.config, Path.cwd())
+            elif args.vision_command == "evaluate":
+                result = evaluate_vision(args.config, Path.cwd(), args.split)
+            else:
+                return 2
+            result["tracking"] = log_cli_run(
+                f"vision-{args.vision_command}",
+                result,
+                tags={"phase": "P20", "command": f"vision-{args.vision_command}"},
+                params={"split": getattr(args, "split", "none")},
+            )
+            print(json.dumps(result, indent=2, sort_keys=True))
+        except (VisionError, OSError, KeyError, json.JSONDecodeError) as exc:
             parser.error(str(exc))
         return 0
     if args.command == "retrieval":

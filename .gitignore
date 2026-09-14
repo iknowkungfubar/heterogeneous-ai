@@ -30,6 +30,7 @@ artifacts/ablations/**
 artifacts/retrieval/**
 artifacts/gnn/**
 artifacts/ssm/**
+artifacts/vision/**
 artifacts/environment/**
 artifacts/mlflow/**
 !artifacts/**/.gitkeep
