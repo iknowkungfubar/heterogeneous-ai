@@ -162,3 +162,25 @@ experiments:
     unknown_category_abstains: true
   conclusion: 'The TRAIN-only decision-tree router preserves utility and exposes auditable traces, but the current one-class expert pool produces no efficiency gain; this negative result is retained for future router comparisons.'
   next_action: 'Advance to P12 verification after GitHub merge and synchronization.'
+- id: P12-VERIFICATION-20260914
+  date: '2026-09-14'
+  hypothesis: 'Independent deterministic verification can validate structured answers, reject plausible wrong candidates, and contribute explicit strength to consensus.'
+  git_commit: PENDING_FINAL_COMMIT
+  parent_experiment: P11-ROUTER-20260914
+  dataset: data/manifests/core-objective-v1.yaml
+  dataset_hash: 1cdfbf16d8ac3efd278023931053ab34519bd634e58b74a5c1b7a78c26cb2bb
+  tokenizer_hash: null
+  model_config: src/hai/verification/layer.py
+  training_config: null
+  seed: null
+  status: passed
+  metrics:
+    validation_samples: 84
+    independently_verified: 84
+    rejected_validation_candidates: 0
+    verification_rate: 1.0
+    adversarial_wrong_candidates_rejected: 2
+    consensus_strength: exact
+    z3_linear_substitution: true
+  conclusion: 'The verification layer independently checks all current structured validation records, rejects adversarial candidates, and fail-closed consensus on unverified or conflicting outputs.'
+  next_action: 'Advance to P13 calibration, consensus, and abstention after GitHub merge and synchronization.'

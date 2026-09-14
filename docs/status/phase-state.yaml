@@ -1,5 +1,5 @@
 project: heterogeneous-ai
-current_phase: P12
+current_phase: P13
 status: ready
 phases:
   P00:
@@ -104,14 +104,15 @@ phases:
     notes: 'TRAIN-only interpretable router passed governance, utility-preservation, and traceability gates; current one-class expert pool yields no call-cost improvement, and unknown categories abstain.'
   P12:
     name: Verification layer
-    status: ready
+    status: passed
     depends_on:
     - P11
-    evidence: []
-    notes: ''
+    evidence:
+    - docs/experiment-reports/P12-verification-layer-2026-09-14.md
+    notes: 'Independent deterministic verification passed all 84 validation records, rejected adversarial wrong candidates, and exposes exact/rejected/abstain strength to consensus.'
   P13:
     name: Calibration, consensus, and abstention
-    status: blocked
+    status: ready
     depends_on:
     - P12
     evidence: []

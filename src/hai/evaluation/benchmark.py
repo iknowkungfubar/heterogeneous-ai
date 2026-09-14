@@ -15,6 +15,7 @@ from hai.symbolic.reasoning import (
     solve_integer_constraints,
     solve_linear_equation_text,
 )
+from hai.verification.layer import verify_candidate
 
 
 class BenchmarkError(ValueError):
@@ -219,4 +220,39 @@ def evaluate_benchmark(
         "correct": correct,
         "accuracy": correct / len(records),
         "correct_by_category": dict(by_category),
+    }
+
+
+def evaluate_system(
+    config_path: Path, root: Path, system: str, split: str = "validation"
+) -> dict:
+    if system != "router-plus-verifier":
+        raise BenchmarkError(f"unsupported benchmark system: {system}")
+    config = load_benchmark_config(config_path)
+    manifest = yaml.safe_load(_manifest_path(root, config).read_text(encoding="utf-8"))
+    records = _read_records(root, manifest, split)
+    verified = 0
+    rejected = 0
+    traces = []
+    for record in records:
+        candidate = _symbolic_answer(record)
+        check = verify_candidate(record["id"], record["category"], record["prompt"], candidate)
+        verified += int(check.passed)
+        rejected += int(check.status == "rejected")
+        traces.append(
+            {
+                "task_id": record["id"],
+                "status": check.status,
+                "strength": check.strength,
+                "reason": check.reason,
+            }
+        )
+    return {
+        "system": system,
+        "split": split,
+        "samples": len(records),
+        "verified": verified,
+        "rejected": rejected,
+        "verification_rate": verified / len(records) if records else 0.0,
+        "decision_trace": traces[:5],
     }
