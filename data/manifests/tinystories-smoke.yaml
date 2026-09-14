@@ -1,0 +1,31 @@
+dataset_id: tinystories-smoke-v1
+purpose: engineering smoke testing only
+source: roneneldan/TinyStories
+source_revision: main
+source_artifact: https://huggingface.co/api/datasets/roneneldan/TinyStories/parquet/default/train/0.parquet
+license: CDLA-Sharing-1.0
+license_source: https://huggingface.co/datasets/roneneldan/TinyStories
+retrieved_at_utc: '2026-09-14T06:37:52+00:00'
+split_seed: 1337
+raw:
+  path: data/raw/tinystories-smoke-v1/records.jsonl
+  sha256: 5ea77ac3c9fadc57e1db0c82fbb6709bef209dd9213eb8fe9423c13cca96ac1c
+  records: 100000
+processed:
+  train:
+    path: data/processed/tinystories-smoke-v1/train.jsonl
+    sha256: 1613a0868eda0f1ba05ed6bb3680165566515f643e430f98abf62d106dd16785
+    records: 80000
+  validation:
+    path: data/processed/tinystories-smoke-v1/validation.jsonl
+    sha256: 9d87a6a79461390c40acd8ed95e652c9fe4c403ec35521aecd0f7e3f55da9b21
+    records: 10000
+  test:
+    path: data/processed/tinystories-smoke-v1/test.jsonl
+    sha256: 139823eb6f9d97b8b02364d72b8898c70bc119f16e6a1b8f84cdec59d997f2e6
+    records: 10000
+tokenizer_training_uses_test_data: false
+split_counts:
+  train: 80000
+  validation: 10000
+  test: 10000
