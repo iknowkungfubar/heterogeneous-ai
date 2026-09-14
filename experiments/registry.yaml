@@ -118,3 +118,24 @@ experiments:
     learned_expert_status: not_applicable
   conclusion: 'Programmatic benchmark generation, split verification, and common-harness symbolic scoring passed; learned structured adapters remain future work.'
   next_action: 'Advance to P10 after GitHub merge and synchronization.'
+- id: P10-PROTOCOL-20260914
+  date: '2026-09-14'
+  hypothesis: 'All core experts emit one versioned result/evidence/provenance contract.'
+  git_commit: 9c9876e
+  parent_experiment: P09-BENCHMARK-20260914
+  dataset: null
+  dataset_hash: null
+  tokenizer_hash: null
+  model_config: src/hai/common/schema.py
+  training_config: null
+  seed: null
+  status: passed
+  metrics:
+    protocol_version: '1.0'
+    core_experts: 3
+    serialized_experts: 3
+    experts_with_evidence: 3
+    explicit_not_applicable_adapters: 2
+    unit_tests_passed: 16
+  conclusion: 'Symbolic, Transformer, and GRU adapters emit validated serializable protocol results with provenance and explicit unsupported states.'
+  next_action: 'Advance to P11 after GitHub merge and synchronization.'
