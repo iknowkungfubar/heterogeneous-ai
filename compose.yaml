@@ -8,6 +8,8 @@ services:
     working_dir: /workspace
     environment:
       PYTHONPATH: /workspace/src
+      MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI:-}
+      MLFLOW_EXPERIMENT_NAME: ${MLFLOW_EXPERIMENT_NAME:-heterogeneous-ai}
     volumes:
       - .:/workspace
     devices:
@@ -19,3 +21,24 @@ services:
     # default IPC and seccomp isolation; do not run untrusted code here.
     stdin_open: true
     tty: true
+
+  mlflow:
+    image: ${HAI_CONTAINER_IMAGE:-heterogeneous-ai-hai}
+    working_dir: /mlflow
+    command:
+      - mlflow
+      - server
+      - --host
+      - 0.0.0.0
+      - --port
+      - "5000"
+      - --backend-store-uri
+      - sqlite:////mlflow/mlflow.db
+      - --default-artifact-root
+      - /mlflow/artifacts
+      - --allowed-hosts
+      - localhost:5000,127.0.0.1:5000,mlflow:5000
+    ports:
+      - "127.0.0.1:5000:5000"
+    volumes:
+      - ./artifacts/mlflow:/mlflow

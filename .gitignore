@@ -24,6 +24,7 @@ artifacts/tokenizers/**
 artifacts/embeddings/**
 artifacts/graphs/**
 artifacts/environment/**
+artifacts/mlflow/**
 !artifacts/**/.gitkeep
 *.pt
 *.pth

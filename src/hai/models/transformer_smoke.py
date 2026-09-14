@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+import os
 import random
+from contextlib import contextmanager
 from pathlib import Path
 
 import torch
@@ -102,6 +104,43 @@ def _save_checkpoint(
     )
 
 
+@contextmanager
+def _tracking_run(output: Path, config: dict, manifest: dict, tokenizer_path: Path):
+    tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
+    if not tracking_uri:
+        yield None
+        return
+    try:
+        import mlflow
+    except ImportError as exc:
+        raise TransformerGovernanceError(
+            "MLFLOW_TRACKING_URI is set but mlflow is not installed"
+        ) from exc
+    mlflow.set_tracking_uri(tracking_uri)
+    mlflow.set_experiment(os.getenv("MLFLOW_EXPERIMENT_NAME", "heterogeneous-ai"))
+    with mlflow.start_run(run_name=output.name):
+        mlflow.log_params(
+            {
+                "model_id": config.get("id", output.name),
+                "seed": config["seed"],
+                "hidden_size": config["hidden_size"],
+                "num_hidden_layers": config["num_hidden_layers"],
+                "context_length": config["context_length"],
+                "micro_batch_size": config["micro_batch_size"],
+                "learning_rate": config["learning_rate"],
+                "dataset_id": manifest.get("dataset_id", "unknown"),
+                "tokenizer_sha256": sha256_file(tokenizer_path),
+            }
+        )
+        mlflow.set_tags(
+            {
+                "initialization": config.get("initialization", "unknown"),
+                "train_split_only": "true",
+            }
+        )
+        yield mlflow
+
+
 def train_model(
     config_path: Path,
     tokenizer_path: Path,
@@ -143,18 +182,25 @@ def train_model(
         raise TransformerGovernanceError("train split produced no token blocks")
     model.train()
     losses = []
-    for step in range(start_step, max_steps):
-        inputs, targets = _batch(train_blocks, config["micro_batch_size"], step, device)
-        loss = nn.functional.cross_entropy(
-            model(inputs).reshape(-1, config["vocab_size"]), targets.reshape(-1)
-        )
-        optimizer.zero_grad(set_to_none=True)
-        loss.backward()
-        nn.utils.clip_grad_norm_(model.parameters(), config["gradient_clip_norm"])
-        optimizer.step()
-        losses.append(float(loss.detach().cpu()))
-    checkpoint_path = output / "checkpoint.pt"
-    _save_checkpoint(checkpoint_path, model, optimizer, max_steps, config)
+    with _tracking_run(output, config, manifest, tokenizer_path) as tracker:
+        for step in range(start_step, max_steps):
+            inputs, targets = _batch(train_blocks, config["micro_batch_size"], step, device)
+            loss = nn.functional.cross_entropy(
+                model(inputs).reshape(-1, config["vocab_size"]), targets.reshape(-1)
+            )
+            optimizer.zero_grad(set_to_none=True)
+            loss.backward()
+            nn.utils.clip_grad_norm_(model.parameters(), config["gradient_clip_norm"])
+            optimizer.step()
+            loss_value = float(loss.detach().cpu())
+            losses.append(loss_value)
+            if tracker is not None:
+                tracker.log_metric("train_loss", loss_value, step=step + 1)
+        checkpoint_path = output / "checkpoint.pt"
+        _save_checkpoint(checkpoint_path, model, optimizer, max_steps, config)
+        if tracker is not None:
+            tracker.log_metric("parameter_count", model.parameter_count(), step=max_steps)
+            tracker.log_artifact(str(checkpoint_path), artifact_path="checkpoints")
     return {
         "experiment": output.name,
         "device": str(device),

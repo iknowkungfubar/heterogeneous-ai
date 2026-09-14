@@ -64,6 +64,33 @@ python scripts/check-phase.py
 
 These checks validate the repository scaffold and identify the first phase that is eligible to run. The ROCm/PyTorch environment is containerized; do not install the full research stack globally on the host. Review [`START_HERE.md`](START_HERE.md) before beginning work.
 
+## Local experiment UI
+
+The repository includes an opt-in, loopback-only MLflow UI for viewing training
+runs, live loss curves, parameters, and checkpoint artifacts. Start it after
+building the validated image:
+
+```bash
+make mlflow-up
+make mlflow-url
+# open http://127.0.0.1:5000
+```
+
+Run training with tracking enabled through the Compose service network:
+
+```bash
+MLFLOW_TRACKING_URI=http://mlflow:5000 \
+  docker compose run --rm hai python -m hai.cli.main train \
+  --model configs/models/transformer-smoke.yaml \
+  --tokenizer artifacts/tokenizers/bpe-8192-v1/tokenizer.json \
+  --dataset-manifest data/manifests/tinystories-smoke.yaml \
+  --max-steps 30 --experiment tracked-smoke
+```
+
+Tracking is disabled when `MLFLOW_TRACKING_URI` is unset. MLflow data stays in
+the ignored local `artifacts/mlflow/` directory and the service binds only to
+the local machine; it is not a public endpoint.
+
 ## Repository map
 
 | Path | Purpose |
