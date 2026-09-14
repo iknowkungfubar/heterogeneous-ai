@@ -76,3 +76,23 @@ experiments:
     complementarity_rate: 0.206787109375
   conclusion: 'The GRU trained successfully and showed measurable token-level error complementarity, while both models remained wrong on most short-run predictions.'
   next_action: 'Advance to P08 after GitHub merge and synchronization.'
+- id: P08-SYMBOLIC-20260914
+  date: '2026-09-14'
+  hypothesis: 'Typed deterministic symbolic adapters can solve exact starter tasks and reject unsupported formalizations safely.'
+  git_commit: PENDING_FINAL_COMMIT
+  parent_experiment: GRU-0001
+  dataset: null
+  dataset_hash: null
+  tokenizer_hash: null
+  model_config: src/hai/symbolic/reasoning.py
+  training_config: null
+  seed: null
+  status: passed
+  metrics:
+    interfaces: 7
+    self_test_cases: 2
+    unit_tests_passed: 12
+    unsafe_inputs_rejected: true
+    structured_traces: true
+  conclusion: 'Exact deterministic symbolic operations and safe failure states are implemented and verified.'
+  next_action: 'Advance to P09 after GitHub merge and synchronization.'

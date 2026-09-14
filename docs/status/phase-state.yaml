@@ -72,14 +72,15 @@ phases:
     notes: 'Randomly initialized GRU trained on the same governed corpus/tokenizer; validation and paired token-level error analysis recorded 20.6787% exact-one-correct complementarity, with both-wrong limitations preserved.'
   P08:
     name: Deterministic symbolic reasoning specialist
-    status: ready
+    status: passed
     depends_on:
     - P07
-    evidence: []
-    notes: ''
+    evidence:
+    - docs/experiment-reports/P08-symbolic-reasoning-2026-09-14.md
+    notes: 'Typed exact arithmetic, algebra, Boolean, bounded constraints, deterministic graph traversal, unit conversion, and ISO-date adapters verified with traces and adversarial rejection tests.'
   P09:
     name: Objective benchmark framework
-    status: blocked
+    status: ready
     depends_on:
     - P08
     evidence: []
