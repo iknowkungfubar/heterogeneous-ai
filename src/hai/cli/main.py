@@ -11,6 +11,14 @@ from hai.data.pipeline import (
     prepare_dataset,
     verify_dataset,
 )
+from hai.models.transformer_smoke import (
+    TinyCausalDecoder,
+    TransformerGovernanceError,
+    evaluate_model,
+    generate_text,
+    load_model_config,
+    train_model,
+)
 from hai.tokenization.bpe import (
     TokenizerGovernanceError,
     inspect_tokenizer,
@@ -68,6 +76,28 @@ def main() -> int:
         "verify", help="verify tokenizer provenance and reload"
     )
     verify_tokenizer_parser.add_argument("--tokenizer", type=Path, required=True)
+    model = sub.add_parser("model", help="create and inspect small research models")
+    model_sub = model.add_subparsers(dest="model_command", required=True)
+    create = model_sub.add_parser("create", help="report a randomly initialized model")
+    create.add_argument("--config", type=Path, required=True)
+    create.add_argument("--tokenizer", type=Path, required=True)
+    train_model_parser = sub.add_parser("train", help="train the tiny causal decoder")
+    train_model_parser.add_argument("--model", type=Path, required=True)
+    train_model_parser.add_argument("--tokenizer", type=Path, required=True)
+    train_model_parser.add_argument("--dataset-manifest", type=Path, required=True)
+    train_model_parser.add_argument("--max-steps", type=int, required=True)
+    train_model_parser.add_argument("--experiment", required=True)
+    train_model_parser.add_argument("--resume", type=Path)
+    evaluate_parser = sub.add_parser("evaluate", help="evaluate a checkpoint on validation")
+    evaluate_parser.add_argument("--model", type=Path, required=True)
+    evaluate_parser.add_argument("--tokenizer", type=Path, required=True)
+    evaluate_parser.add_argument("--dataset-manifest", type=Path, required=True)
+    evaluate_parser.add_argument("--checkpoint", type=Path, required=True)
+    generate_parser = sub.add_parser("generate", help="generate fixed greedy text")
+    generate_parser.add_argument("--model", type=Path, required=True)
+    generate_parser.add_argument("--tokenizer", type=Path, required=True)
+    generate_parser.add_argument("--checkpoint", type=Path, required=True)
+    generate_parser.add_argument("--prompt", required=True)
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
@@ -101,6 +131,41 @@ def main() -> int:
         except (TokenizerGovernanceError, OSError) as exc:
             parser.error(str(exc))
         return 0
+    if args.command == "model":
+        try:
+            config = load_model_config(args.config)
+            tokenizer_config = json.loads(args.tokenizer.read_text(encoding="utf-8"))
+            config["vocab_size"] = len(tokenizer_config["model"]["vocab"])
+            result = {
+                "initialization": config["initialization"],
+                "parameter_count": TinyCausalDecoder(config).parameter_count(),
+            }
+            print(json.dumps(result, indent=2, sort_keys=True))
+        except (TransformerGovernanceError, OSError, KeyError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
+        return 0
+    try:
+        if args.command == "train":
+            result = train_model(
+                args.model,
+                args.tokenizer,
+                args.dataset_manifest,
+                Path("artifacts/checkpoints") / args.experiment,
+                args.max_steps,
+                args.resume,
+            )
+        elif args.command == "evaluate":
+            result = evaluate_model(
+                args.model, args.tokenizer, args.dataset_manifest, args.checkpoint
+            )
+        elif args.command == "generate":
+            result = generate_text(args.model, args.tokenizer, args.checkpoint, args.prompt)
+        else:
+            return 2
+        print(json.dumps(result, indent=2, sort_keys=True))
+    except (TransformerGovernanceError, OSError, KeyError, json.JSONDecodeError) as exc:
+        parser.error(str(exc))
+    return 0
     return 2
 
 
