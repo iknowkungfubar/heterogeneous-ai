@@ -24,6 +24,7 @@ artifacts/checkpoints/**
 artifacts/tokenizers/**
 artifacts/embeddings/**
 artifacts/graphs/**
+artifacts/routers/**
 artifacts/environment/**
 artifacts/mlflow/**
 !artifacts/**/.gitkeep

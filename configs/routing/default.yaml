@@ -1,4 +1,6 @@
 id: router-v1
+output_dir: artifacts/routers/router-v1
+confidence_threshold: 0.75
 baseline_models:
   - logistic_regression
   - decision_tree
