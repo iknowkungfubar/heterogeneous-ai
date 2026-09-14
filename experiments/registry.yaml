@@ -372,7 +372,7 @@ experiments:
 - id: P20-VISION-20260914
   date: '2026-09-14'
   hypothesis: 'A small scratch-trained patch/Transformer vision encoder can learn a deterministic standalone image task on held-out images before multimodal fusion.'
-  git_commit: PENDING_FINAL_COMMIT
+  git_commit: b0f865a
   parent_experiment: P19-SSM-20260914
   dataset: docs/dataset-cards/procedural-shapes-v1.md
   dataset_hash: ce68e799bd3bef9064badbf3852739a795fa85903db6f0ce650d39f0e263c6e4
