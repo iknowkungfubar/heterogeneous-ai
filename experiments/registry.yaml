@@ -430,7 +430,7 @@ experiments:
 - id: P22-VISUAL-OBJECTIVE-20260914
   date: '2026-09-14'
   hypothesis: 'Fused image/question models beat unimodal and random baselines, while cross-attention is retained only if it improves over projection fusion.'
-  git_commit: PENDING_FINAL_COMMIT
+  git_commit: 0fc7896
   parent_experiment: P21-IMAGE-TEXT-20260914
   dataset: configs/models/fusion.yaml
   dataset_hash: bb68da9d45b70d3a5c98f8f50bc2100e2a42dd80b3d1ee3f86034568908ca089
