@@ -87,9 +87,10 @@ MLFLOW_TRACKING_URI=http://mlflow:5000 \
   --max-steps 30 --experiment tracked-smoke
 ```
 
-Tracking is disabled when `MLFLOW_TRACKING_URI` is unset. MLflow data stays in
-the ignored local `artifacts/mlflow/` directory and the service binds only to
-the local machine; it is not a public endpoint.
+Compose training containers automatically use the local MLflow service. Host-side
+training commands can opt in with `MLFLOW_TRACKING_URI=http://127.0.0.1:5000`.
+MLflow data stays in the ignored local `artifacts/mlflow/` directory and the
+service binds only to the local machine; it is not a public endpoint.
 
 ## Repository map
 
