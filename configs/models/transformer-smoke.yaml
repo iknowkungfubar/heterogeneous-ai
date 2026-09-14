@@ -9,3 +9,12 @@ num_attention_heads: 4
 num_key_value_heads: 2
 context_length: 128
 tie_word_embeddings: true
+seed: 1337
+precision: fp32
+micro_batch_size: 4
+learning_rate: 0.0003
+weight_decay: 0.1
+gradient_clip_norm: 1.0
+checkpointing:
+  save_optimizer: true
+  save_rng_state: true

@@ -1,5 +1,5 @@
 project: heterogeneous-ai
-current_phase: P05
+current_phase: P06
 status: ready
 phases:
   P00:
@@ -46,14 +46,15 @@ phases:
     notes: 'Project-owned BPE tokenizer trained from TRAIN only; artifact provenance, exact edge-case round trips, vocabulary statistics, and source hashes verified.'
   P05:
     name: Tiny Transformer pipeline smoke model
-    status: ready
+    status: passed
     depends_on:
     - P04
-    evidence: []
-    notes: ''
+    evidence:
+    - docs/experiment-reports/P05-tiny-transformer-smoke-2026-09-14.md
+    notes: 'Randomly initialized causal decoder trained on governed token blocks; CUDA loss reduction, checkpoint/resume, validation, and generation all passed. The short run is plumbing evidence only, not a quality claim.'
   P06:
     name: Scratch-trained Transformer baseline
-    status: blocked
+    status: ready
     depends_on:
     - P05
     evidence: []
