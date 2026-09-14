@@ -1,5 +1,9 @@
 # Security and Safety Model
 
+## Reporting a vulnerability
+
+Please do not open a public issue for a suspected vulnerability. Use GitHub's private vulnerability reporting for this repository when available, or contact the maintainer privately through the GitHub profile. Include a concise impact summary, affected commit or path, reproduction details that do not contain secrets, and any suggested mitigation. Do not include credentials, private data, or live exploit payloads in a public pull request.
+
 ## Threats in scope
 
 - malicious/poisoned datasets;
