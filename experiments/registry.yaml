@@ -239,7 +239,7 @@ experiments:
 - id: P15-RETRIEVAL-20260914
   date: '2026-09-14'
   hypothesis: 'A random-initialized dual encoder can beat random retrieval, while hybrid lexical+dense retrieval improves over lexical matching with provenance.'
-  git_commit: PENDING_FINAL_COMMIT
+  git_commit: 548178b
   parent_experiment: P14-CORE-M2-20260914
   dataset: data/manifests/tinystories-smoke.yaml
   dataset_hash: 5ea77ac3c9fadc57e1db0c82fbb6709bef209dd9213eb8fe9423c13cca96ac1c
