@@ -1,8 +1,8 @@
 id: TFRM-0001
 hypothesis: "The scratch Transformer pipeline can train stably and beat its random-initialization baseline on held-out data."
 model: configs/models/transformer-baseline.yaml
-dataset: configs/datasets/babylm-strict-small.yaml
+dataset: configs/datasets/tinystories-smoke.yaml
 tokenizer: configs/tokenizers/bpe-8192.yaml
 training: configs/training/default.yaml
 seed: 1337
-status: planned
+status: approved-smoke-baseline

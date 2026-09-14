@@ -23,3 +23,27 @@ experiments:
     checkpoint_round_trip: true
   conclusion: 'GPU forward/backward, optimizer, finite-loss, memory, and checkpoint smoke passed.'
   next_action: 'Begin P03 data governance and dataset pipeline.'
+- id: TFRM-0001
+  date: '2026-09-14'
+  hypothesis: 'The scratch Transformer pipeline can train stably on the governed smoke dataset and produce a reproducible held-out baseline.'
+  git_commit: PENDING_FINAL_COMMIT
+  parent_experiment: P05-gpu-30
+  dataset: data/manifests/tinystories-smoke.yaml
+  dataset_hash: 5ea77ac3c9fadc57e1db0c82fbb6709bef209dd9213eb8fe9423c13cca96ac1c
+  tokenizer_hash: 5186f3747fbd6f944ad4e62b09a624c6f2019734260057e348dcdf096da9d4d2
+  model_config: configs/models/transformer-baseline.yaml
+  training_config: configs/experiments/TFRM-0001.yaml
+  seed: 1337
+  status: passed-smoke-baseline
+  metrics:
+    parameter_count: 25478144
+    steps: 300
+    start_loss: 190.32144165039062
+    final_loss: 7.3690185546875
+    validation_loss: 7.340579509735107
+    validation_perplexity: 1541.605224609375
+    peak_memory_bytes: 1140398080
+    preflight_steps_per_second: 0.3383365399
+    checkpoint_sha256: f0a245bf2e63da308b25b1108dd6e90259a37315c4cdf51f7e010f1e036fca03
+  conclusion: 'Smoke-scale 25.5M parameter scratch Transformer trained on governed TinyStories data; held-out validation and generation passed.'
+  next_action: 'Advance to P07 after GitHub merge and synchronization.'
