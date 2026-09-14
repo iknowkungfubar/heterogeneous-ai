@@ -1,0 +1,11 @@
+id: core-m2
+benchmark: core-objective-v1
+frozen_validation_threshold: 0.75
+bootstrap_seeds: [1337, 2027, 31415]
+bootstrap_iterations: 1000
+variants:
+  - transformer-baseline
+  - gru-sequence
+  - symbolic-only
+  - heterogeneous-core
+  - all-experts

@@ -17,6 +17,7 @@ from hai.data.pipeline import (
     prepare_dataset,
     verify_dataset,
 )
+from hai.evaluation.ablation import AblationError, milestone_report, run_ablation
 from hai.evaluation.benchmark import (
     BenchmarkError,
     evaluate_benchmark,
@@ -227,9 +228,44 @@ def main() -> int:
     )
     reliability.add_argument("--config", type=Path, default=Path("configs/benchmarks/core.yaml"))
     reliability.add_argument("--split", choices=("validation",), default="validation")
+    ablation = sub.add_parser("ablation", help="run frozen milestone ablation suites")
+    ablation_sub = ablation.add_subparsers(dest="ablation_command", required=True)
+    ablation_run = ablation_sub.add_parser("run", help="evaluate a frozen suite on TEST")
+    ablation_run.add_argument("--suite", choices=("core-m2",), required=True)
+    ablation_run.add_argument("--split", choices=("test",), default="test")
+    report = sub.add_parser("report", help="read milestone reports")
+    report_sub = report.add_subparsers(dest="report_command", required=True)
+    milestone = report_sub.add_parser("milestone", help="show an ablation milestone report")
+    milestone.add_argument("name", choices=("M2",))
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
+    if args.command == "ablation":
+        if args.ablation_command != "run":
+            return 2
+        try:
+            result = run_ablation(
+                Path("configs/ablation") / f"{args.suite}.yaml", Path.cwd(), args.split
+            )
+            print(
+                json.dumps(
+                    write_report(result, Path("artifacts/ablations") / f"{args.suite}.json"),
+                    indent=2,
+                    sort_keys=True,
+                )
+            )
+        except (AblationError, OSError, KeyError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
+        return 0
+    if args.command == "report":
+        if args.report_command != "milestone":
+            return 2
+        try:
+            result = milestone_report(Path("artifacts/ablations/core-m2.json"))
+            print(json.dumps(result, indent=2, sort_keys=True))
+        except (AblationError, OSError, KeyError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
+        return 0
     if args.command == "calibrate":
         try:
             result = calibrate(args.config, Path.cwd(), args.split, args.method)
