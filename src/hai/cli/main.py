@@ -31,6 +31,8 @@ from hai.graph.store import GraphError, GraphStore
 from hai.graph.store import self_test as graph_self_test
 from hai.memory.store import MemoryError, MemoryStore
 from hai.memory.store import self_test as memory_self_test
+from hai.models.fusion import FusionError, evaluate_fusion, train_fusion
+from hai.models.fusion import data_verify as fusion_data_verify
 from hai.models.gnn import (
     GNNEvaluationError,
     compare_gnn,
@@ -390,6 +392,26 @@ def main() -> int:
     alignment_evaluate.add_argument(
         "--directions", default="image-to-text,text-to-image"
     )
+    fusion_train = multimodal_sub.add_parser(
+        "train-fusion", help="train a visual reasoning fusion variant"
+    )
+    fusion_train.add_argument("--variant", choices=("projection", "cross-attention"), required=True)
+    fusion_train.add_argument(
+        "--config", type=Path, default=Path("configs/models/fusion.yaml")
+    )
+    fusion_data = multimodal_sub.add_parser(
+        "fusion-data-verify", help="verify the visual reasoning task provenance"
+    )
+    fusion_data.add_argument(
+        "--config", type=Path, default=Path("configs/models/fusion.yaml")
+    )
+    fusion_evaluate = multimodal_sub.add_parser(
+        "evaluate", help="evaluate visual-objective-v1 fusion ablation"
+    )
+    fusion_evaluate.add_argument("--suite", default="visual-objective-v1")
+    fusion_evaluate.add_argument(
+        "--config", type=Path, default=Path("configs/models/fusion.yaml")
+    )
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
@@ -558,16 +580,25 @@ def main() -> int:
                 result = multimodal_data_verify(args.config)
             elif args.multimodal_command == "evaluate-retrieval":
                 result = evaluate_alignment(args.config, Path.cwd(), args.directions)
+            elif args.multimodal_command == "train-fusion":
+                result = train_fusion(args.config, Path.cwd(), args.variant)
+            elif args.multimodal_command == "fusion-data-verify":
+                result = fusion_data_verify(args.config)
+            elif args.multimodal_command == "evaluate":
+                result = evaluate_fusion(args.config, Path.cwd(), args.suite)
             else:
                 return 2
             result["tracking"] = log_cli_run(
                 f"multimodal-{args.multimodal_command}",
                 result,
                 tags={"phase": "P21", "command": f"multimodal-{args.multimodal_command}"},
-                params={"directions": getattr(args, "directions", "none")},
+                params={
+                    "directions": getattr(args, "directions", "none"),
+                    "variant": getattr(args, "variant", "none"),
+                },
             )
             print(json.dumps(result, indent=2, sort_keys=True))
-        except (MultimodalError, OSError, KeyError, json.JSONDecodeError) as exc:
+        except (MultimodalError, FusionError, OSError, KeyError, json.JSONDecodeError) as exc:
             parser.error(str(exc))
         return 0
     if args.command == "retrieval":
