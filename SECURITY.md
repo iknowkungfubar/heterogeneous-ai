@@ -28,6 +28,8 @@ Please do not open a public issue for a suspected vulnerability. Use GitHub's pr
 7. Secrets never enter prompts, datasets, logs, or Git unless deliberately redacted and safe.
 8. RL actions are restricted to a finite registry of safe orchestration operations.
 
+The local ROCm Compose service is a development environment, not a security sandbox. It receives GPU device mappings and a writable repository mount so experiments can run. Review code and dependencies before execution, never use it for untrusted workloads, and keep host IPC/seccomp isolation enabled.
+
 ## Memory ingestion
 
 `candidate → source/provenance check → duplicate/conflict check → validation/trust label → memory`

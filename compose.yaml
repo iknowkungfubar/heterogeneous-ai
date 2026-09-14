@@ -15,8 +15,7 @@ services:
       - /dev/dri:/dev/dri
     group_add:
       - video
-    ipc: host
-    security_opt:
-      - seccomp=unconfined
+    # GPU device mappings are required for ROCm. Keep the container on its
+    # default IPC and seccomp isolation; do not run untrusted code here.
     stdin_open: true
     tty: true
