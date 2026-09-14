@@ -1,6 +1,9 @@
 from pathlib import Path
 
+import pytest
 import yaml
+
+pytest.importorskip("torch")
 
 from hai.models.gnn import _graph, evaluate_gnn, graph_baseline, load_gnn_config, train_gnn
 
