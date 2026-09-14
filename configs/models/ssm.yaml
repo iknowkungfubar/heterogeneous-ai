@@ -1,0 +1,14 @@
+id: ssm-v1
+architecture: plain_pytorch_diagonal_state_space
+initialization: random
+seed: 1337
+vocab_size: 8
+embedding_size: 32
+hidden_size: 48
+sequence_length: 64
+batch_size: 32
+train_seed: 101
+validation_seed: 202
+initial_decay_logit: 1.0
+learning_rate: 0.003
+output_dir: artifacts/ssm/ssm-v1
