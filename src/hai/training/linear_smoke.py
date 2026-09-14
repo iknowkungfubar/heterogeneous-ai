@@ -24,7 +24,11 @@ def train(steps: int = 500) -> tuple[float, float, float]:
         loss.backward()
         optimizer.step()
         final_loss = float(loss.detach().cpu())
-    return float(model.weight.detach().cpu().item()), float(model.bias.detach().cpu().item()), final_loss
+    return (
+        float(model.weight.detach().cpu().item()),
+        float(model.bias.detach().cpu().item()),
+        final_loss,
+    )
 
 
 def main() -> int:
