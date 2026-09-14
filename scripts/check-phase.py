@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+
 import yaml
 
 
@@ -21,7 +22,10 @@ def main() -> int:
     pid, status, name = ready[0]
     print(f"First dependency-ready phase: {pid} — {name} (state={status})")
     if len(ready) > 1:
-        print("Note: multiple phases are technically dependency-ready; AGENTS.md requires working on the first unless authorized.")
+        print(
+            "Note: multiple phases are technically dependency-ready; AGENTS.md "
+            "requires working on the first unless authorized."
+        )
     return 0
 
 
