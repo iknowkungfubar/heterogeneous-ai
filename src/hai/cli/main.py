@@ -10,6 +10,7 @@ from hai.calibration.engine import (
     evaluate_consensus,
     write_report,
 )
+from hai.common.tracking import log_cli_run
 from hai.data.pipeline import (
     DataGovernanceError,
     fetch_dataset,
@@ -249,7 +250,15 @@ def main() -> int:
             )
             print(
                 json.dumps(
-                    write_report(result, Path("artifacts/ablations") / f"{args.suite}.json"),
+                    {
+                        **write_report(result, Path("artifacts/ablations") / f"{args.suite}.json"),
+                        "tracking": log_cli_run(
+                            f"ablation-{args.suite}-{args.split}",
+                            result,
+                            tags={"phase": "P14", "command": "ablation", "split": args.split},
+                            params={"suite": args.suite, "split": args.split},
+                        ),
+                    },
                     indent=2,
                     sort_keys=True,
                 )
@@ -269,12 +278,15 @@ def main() -> int:
     if args.command == "calibrate":
         try:
             result = calibrate(args.config, Path.cwd(), args.split, args.method)
+            report_result = write_report(result, Path("artifacts/calibration/calibration-v1.json"))
+            report_result["tracking"] = log_cli_run(
+                f"calibrate-{args.split}",
+                result,
+                tags={"phase": "P13", "command": "calibrate", "split": args.split},
+                params={"method": args.method, "split": args.split},
+            )
             print(
-                json.dumps(
-                    write_report(result, Path("artifacts/calibration/calibration-v1.json")),
-                    indent=2,
-                    sort_keys=True,
-                )
+                json.dumps(report_result, indent=2, sort_keys=True)
             )
         except (CalibrationError, OSError, KeyError, json.JSONDecodeError) as exc:
             parser.error(str(exc))
@@ -284,12 +296,15 @@ def main() -> int:
             return 2
         try:
             result = evaluate_consensus(args.config, Path.cwd(), args.split)
+            report_result = write_report(result, Path("artifacts/calibration/consensus-v1.json"))
+            report_result["tracking"] = log_cli_run(
+                f"consensus-{args.split}",
+                result,
+                tags={"phase": "P13", "command": "consensus", "split": args.split},
+                params={"split": args.split},
+            )
             print(
-                json.dumps(
-                    write_report(result, Path("artifacts/calibration/consensus-v1.json")),
-                    indent=2,
-                    sort_keys=True,
-                )
+                json.dumps(report_result, indent=2, sort_keys=True)
             )
         except (CalibrationError, OSError, KeyError, json.JSONDecodeError) as exc:
             parser.error(str(exc))
@@ -299,12 +314,15 @@ def main() -> int:
             return 2
         try:
             result = calibrate(args.config, Path.cwd(), args.split, "all")
+            report_result = write_report(result, Path("artifacts/calibration/reliability-v1.json"))
+            report_result["tracking"] = log_cli_run(
+                f"reliability-{args.split}",
+                result,
+                tags={"phase": "P13", "command": "reliability-report", "split": args.split},
+                params={"split": args.split},
+            )
             print(
-                json.dumps(
-                    write_report(result, Path("artifacts/calibration/reliability-v1.json")),
-                    indent=2,
-                    sort_keys=True,
-                )
+                json.dumps(report_result, indent=2, sort_keys=True)
             )
         except (CalibrationError, OSError, KeyError, json.JSONDecodeError) as exc:
             parser.error(str(exc))
@@ -377,6 +395,12 @@ def main() -> int:
                 )
             else:
                 return 2
+            result["tracking"] = log_cli_run(
+                f"benchmark-{args.benchmark_command}",
+                result,
+                tags={"phase": "evaluation", "command": f"benchmark-{args.benchmark_command}"},
+                params={"split": getattr(args, "split", "none")},
+            )
             print(json.dumps(result, indent=2, sort_keys=True))
         except (BenchmarkError, OSError, KeyError, json.JSONDecodeError) as exc:
             parser.error(str(exc))
@@ -384,7 +408,13 @@ def main() -> int:
     if args.command == "verify":
         if args.verify_command != "self-test":
             return 2
-        print(json.dumps(verification_self_test(), indent=2, sort_keys=True))
+        result = verification_self_test()
+        result["tracking"] = log_cli_run(
+            "verification-self-test",
+            result,
+            tags={"phase": "P12", "command": "verify-self-test"},
+        )
+        print(json.dumps(result, indent=2, sort_keys=True))
         return 0
     if args.command == "expert":
         if args.expert_command != "self-test":
@@ -428,6 +458,12 @@ def main() -> int:
                 result = route_prompt(args.config, args.prompt, args.category, Path.cwd())
             else:
                 return 2
+            result["tracking"] = log_cli_run(
+                f"router-{args.router_command}",
+                result,
+                tags={"phase": "P11", "command": f"router-{args.router_command}"},
+                params={"split": getattr(args, "split", "none")},
+            )
             print(json.dumps(result, indent=2, sort_keys=True))
         except (RouterError, OSError, KeyError, json.JSONDecodeError) as exc:
             parser.error(str(exc))

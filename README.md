@@ -66,8 +66,8 @@ These checks validate the repository scaffold and identify the first phase that 
 
 ## Local experiment UI
 
-The repository includes an opt-in, loopback-only MLflow UI for viewing training
-runs, live loss curves, parameters, and checkpoint artifacts. Start it after
+The repository includes a loopback-only MLflow UI for viewing training and
+evaluation runs, metrics, parameters, and JSON result artifacts. Start it after
 building the validated image:
 
 ```bash
@@ -88,7 +88,12 @@ MLFLOW_TRACKING_URI=http://mlflow:5000 \
 ```
 
 Compose training containers automatically use the local MLflow service. Host-side
-training commands can opt in with `MLFLOW_TRACKING_URI=http://127.0.0.1:5000`.
+training and evaluation commands can opt in with
+`MLFLOW_TRACKING_URI=http://127.0.0.1:5000`. The Compose CLI automatically logs
+calibration, consensus, verification, benchmark, router, and ablation commands
+to the same experiment, so short research phases appear as runs even when no
+neural training loop is active. If MLflow is unavailable, the command continues
+and reports a tracking warning rather than losing the research result.
 MLflow data stays in the ignored local `artifacts/mlflow/` directory and the
 service binds only to the local machine; it is not a public endpoint.
 
