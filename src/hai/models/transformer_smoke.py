@@ -124,7 +124,7 @@ def _tracking_run(output: Path, config: dict, manifest: dict, tokenizer_path: Pa
                 "model_id": config.get("id", output.name),
                 "seed": config["seed"],
                 "hidden_size": config["hidden_size"],
-                "num_hidden_layers": config["num_hidden_layers"],
+                "layer_count": config.get("num_hidden_layers", config.get("num_layers")),
                 "context_length": config["context_length"],
                 "micro_batch_size": config["micro_batch_size"],
                 "learning_rate": config["learning_rate"],

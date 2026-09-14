@@ -11,6 +11,13 @@ from hai.data.pipeline import (
     prepare_dataset,
     verify_dataset,
 )
+from hai.models.gru import (
+    GRUGovernanceError,
+    GRULanguageModel,
+    compare_errors,
+    evaluate_gru,
+    train_gru,
+)
 from hai.models.transformer_smoke import (
     TinyCausalDecoder,
     TransformerGovernanceError,
@@ -98,6 +105,16 @@ def main() -> int:
     generate_parser.add_argument("--tokenizer", type=Path, required=True)
     generate_parser.add_argument("--checkpoint", type=Path, required=True)
     generate_parser.add_argument("--prompt", required=True)
+    compare_parser = sub.add_parser(
+        "compare-errors", help="compare paired Transformer/GRU token errors"
+    )
+    compare_parser.add_argument("--transformer-model", type=Path, required=True)
+    compare_parser.add_argument("--gru-model", type=Path, required=True)
+    compare_parser.add_argument("--tokenizer", type=Path, required=True)
+    compare_parser.add_argument("--dataset-manifest", type=Path, required=True)
+    compare_parser.add_argument("--transformer-checkpoint", type=Path, required=True)
+    compare_parser.add_argument("--gru-checkpoint", type=Path, required=True)
+    compare_parser.add_argument("--max-blocks", type=int, default=128)
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
@@ -136,9 +153,14 @@ def main() -> int:
             config = load_model_config(args.config)
             tokenizer_config = json.loads(args.tokenizer.read_text(encoding="utf-8"))
             config["vocab_size"] = len(tokenizer_config["model"]["vocab"])
+            model_class = (
+                GRULanguageModel
+                if config.get("architecture") == "gru_language_model"
+                else TinyCausalDecoder
+            )
             result = {
                 "initialization": config["initialization"],
-                "parameter_count": TinyCausalDecoder(config).parameter_count(),
+                "parameter_count": model_class(config).parameter_count(),
             }
             print(json.dumps(result, indent=2, sort_keys=True))
         except (TransformerGovernanceError, OSError, KeyError, json.JSONDecodeError) as exc:
@@ -146,24 +168,55 @@ def main() -> int:
         return 0
     try:
         if args.command == "train":
-            result = train_model(
-                args.model,
-                args.tokenizer,
-                args.dataset_manifest,
-                Path("artifacts/checkpoints") / args.experiment,
-                args.max_steps,
-                args.resume,
-            )
+            if load_model_config(args.model).get("architecture") == "gru_language_model":
+                result = train_gru(
+                    args.model,
+                    args.tokenizer,
+                    args.dataset_manifest,
+                    Path("artifacts/checkpoints") / args.experiment,
+                    args.max_steps,
+                    args.resume,
+                )
+            else:
+                result = train_model(
+                    args.model,
+                    args.tokenizer,
+                    args.dataset_manifest,
+                    Path("artifacts/checkpoints") / args.experiment,
+                    args.max_steps,
+                    args.resume,
+                )
         elif args.command == "evaluate":
-            result = evaluate_model(
-                args.model, args.tokenizer, args.dataset_manifest, args.checkpoint
-            )
+            if load_model_config(args.model).get("architecture") == "gru_language_model":
+                result = evaluate_gru(
+                    args.model, args.tokenizer, args.dataset_manifest, args.checkpoint
+                )
+            else:
+                result = evaluate_model(
+                    args.model, args.tokenizer, args.dataset_manifest, args.checkpoint
+                )
         elif args.command == "generate":
             result = generate_text(args.model, args.tokenizer, args.checkpoint, args.prompt)
+        elif args.command == "compare-errors":
+            result = compare_errors(
+                args.transformer_model,
+                args.gru_model,
+                args.tokenizer,
+                args.dataset_manifest,
+                args.transformer_checkpoint,
+                args.gru_checkpoint,
+                args.max_blocks,
+            )
         else:
             return 2
         print(json.dumps(result, indent=2, sort_keys=True))
-    except (TransformerGovernanceError, OSError, KeyError, json.JSONDecodeError) as exc:
+    except (
+        TransformerGovernanceError,
+        GRUGovernanceError,
+        OSError,
+        KeyError,
+        json.JSONDecodeError,
+    ) as exc:
         parser.error(str(exc))
     return 0
     return 2

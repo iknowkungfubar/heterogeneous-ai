@@ -1,5 +1,5 @@
 project: heterogeneous-ai
-current_phase: P06
+current_phase: P08
 status: ready
 phases:
   P00:
@@ -63,14 +63,16 @@ phases:
     notes: 'Smoke-scale 25.5M parameter scratch baseline trained on governed TinyStories data; preflight resources, 300-step CUDA training, checkpoint hash, validation, and generation recorded. BabyLM remains deferred under ADR-0004.'
   P07:
     name: Independent sequence specialist
-    status: ready
+    status: passed
     depends_on:
     - P06
-    evidence: []
-    notes: ''
+    evidence:
+    - docs/experiment-reports/P07-gru-sequence-specialist-2026-09-14.md
+    - docs/model-cards/gru-sequence-v1.md
+    notes: 'Randomly initialized GRU trained on the same governed corpus/tokenizer; validation and paired token-level error analysis recorded 20.6787% exact-one-correct complementarity, with both-wrong limitations preserved.'
   P08:
     name: Deterministic symbolic reasoning specialist
-    status: blocked
+    status: ready
     depends_on:
     - P07
     evidence: []
