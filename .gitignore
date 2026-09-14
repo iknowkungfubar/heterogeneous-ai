@@ -14,6 +14,7 @@ htmlcov/
 # Large/local data
 data/raw/**
 data/interim/**
+data/benchmarks/**
 data/processed/**
 data/multimodal/**
 !data/**/.gitkeep

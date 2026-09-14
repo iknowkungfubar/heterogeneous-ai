@@ -1,5 +1,5 @@
 project: heterogeneous-ai
-current_phase: P08
+current_phase: P10
 status: ready
 phases:
   P00:
@@ -80,14 +80,15 @@ phases:
     notes: 'Typed exact arithmetic, algebra, Boolean, bounded constraints, deterministic graph traversal, unit conversion, and ISO-date adapters verified with traces and adversarial rejection tests.'
   P09:
     name: Objective benchmark framework
-    status: ready
+    status: passed
     depends_on:
     - P08
-    evidence: []
-    notes: ''
+    evidence:
+    - docs/experiment-reports/P09-objective-benchmark-2026-09-14.md
+    notes: 'Seven-category deterministic benchmark generated with 84 records per split, verified hash/disjointness, exact symbolic validation scoring, and explicit not-applicable statuses for learned experts without structured adapters.'
   P10:
     name: Unified expert protocol and provenance
-    status: blocked
+    status: ready
     depends_on:
     - P09
     evidence: []

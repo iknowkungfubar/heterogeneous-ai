@@ -11,6 +11,12 @@ from hai.data.pipeline import (
     prepare_dataset,
     verify_dataset,
 )
+from hai.evaluation.benchmark import (
+    BenchmarkError,
+    evaluate_benchmark,
+    generate_benchmark,
+    verify_benchmark,
+)
 from hai.models.gru import (
     GRUGovernanceError,
     GRULanguageModel,
@@ -125,6 +131,22 @@ def main() -> int:
     solve = symbolic_sub.add_parser("solve", help="solve a safe arithmetic or linear equation")
     solve.add_argument("expression")
     symbolic_sub.add_parser("self-test", help="run deterministic symbolic self-tests")
+    benchmark = sub.add_parser("benchmark", help="generate and score objective benchmarks")
+    benchmark_sub = benchmark.add_subparsers(dest="benchmark_command", required=True)
+    for command, help_text in (
+        ("generate", "generate held-out benchmark partitions"),
+        ("verify", "verify benchmark hashes and split isolation"),
+    ):
+        action = benchmark_sub.add_parser(command, help=help_text)
+        action.add_argument("--config", type=Path, required=True)
+    benchmark_evaluate = benchmark_sub.add_parser(
+        "evaluate", help="evaluate one expert through the common harness"
+    )
+    benchmark_evaluate.add_argument("--config", type=Path, required=True)
+    benchmark_evaluate.add_argument("--expert", required=True)
+    benchmark_evaluate.add_argument(
+        "--split", choices=("train", "validation", "test"), default="validation"
+    )
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
@@ -180,6 +202,20 @@ def main() -> int:
             else:
                 return 2
         except (SymbolicError, OSError) as exc:
+            parser.error(str(exc))
+        return 0
+    if args.command == "benchmark":
+        try:
+            if args.benchmark_command == "generate":
+                result = generate_benchmark(args.config, Path.cwd())
+            elif args.benchmark_command == "verify":
+                result = verify_benchmark(args.config, Path.cwd())
+            elif args.benchmark_command == "evaluate":
+                result = evaluate_benchmark(args.config, Path.cwd(), args.expert, args.split)
+            else:
+                return 2
+            print(json.dumps(result, indent=2, sort_keys=True))
+        except (BenchmarkError, OSError, KeyError, json.JSONDecodeError) as exc:
             parser.error(str(exc))
         return 0
     if args.command == "model":

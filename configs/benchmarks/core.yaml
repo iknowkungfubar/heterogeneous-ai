@@ -1,5 +1,7 @@
 id: core-objective-v1
+id: core-objective-v1
 split_seed: 1337
+samples_per_category: 12
 categories:
   arithmetic: true
   linear_equations: true

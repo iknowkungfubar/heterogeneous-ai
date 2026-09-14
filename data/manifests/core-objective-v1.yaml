@@ -1,0 +1,26 @@
+benchmark_id: core-objective-v1
+version: 1
+generator: hai.evaluation.benchmark
+split_seed: 1337
+categories:
+- arithmetic
+- linear_equations
+- boolean_logic
+- constraints
+- graph_paths
+- deterministic_sequences
+- language_classification
+samples_per_category: 12
+splits:
+  train:
+    path: data/benchmarks/core-objective-v1/train.jsonl
+    sha256: 8b8484f0e30aa0570889da2770d2ad566771e18789fb971b9598bf6b36a664be
+    records: 84
+  validation:
+    path: data/benchmarks/core-objective-v1/validation.jsonl
+    sha256: bcb0032e877d411f31a1500e8d49ade054edd1e7595365c83def5323eac02e11
+    records: 84
+  test:
+    path: data/benchmarks/core-objective-v1/test.jsonl
+    sha256: e55a5a92ecdd992da73d6a3c307d0c98d356abd964085989b856d8f6a6d331a8
+    records: 84
