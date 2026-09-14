@@ -29,6 +29,7 @@ artifacts/calibration/**
 artifacts/ablations/**
 artifacts/retrieval/**
 artifacts/gnn/**
+artifacts/ssm/**
 artifacts/environment/**
 artifacts/mlflow/**
 !artifacts/**/.gitkeep

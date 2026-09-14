@@ -1,5 +1,5 @@
 project: heterogeneous-ai
-current_phase: P19
+current_phase: P20
 status: ready
 phases:
   P00:
@@ -160,14 +160,15 @@ phases:
     notes: 'Scratch-trained GNN reproducibility passed, but validation accuracy was 0.50 versus 1.00 for the deterministic graph baseline; the learned specialist is not retained.'
   P19:
     name: Mamba/state-space compatibility and specialist
-    status: ready
+    status: passed
     depends_on:
     - P18
-    evidence: []
-    notes: ''
+    evidence:
+    - docs/experiment-reports/P19-mamba-state-space-2026-09-14.md
+    notes: 'AMD/ROCm plain-PyTorch state-space compatibility, GPU forward/backward, 100-step training, checkpoint round-trip, and GRU comparison passed; SSM did not replace GRU on quality.'
   P20:
     name: Vision specialist from scratch
-    status: blocked
+    status: ready
     depends_on:
     - P19
     evidence: []

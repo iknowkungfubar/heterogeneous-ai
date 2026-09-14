@@ -44,6 +44,12 @@ from hai.models.gru import (
     evaluate_gru,
     train_gru,
 )
+from hai.models.state_space import (
+    StateSpaceError,
+    benchmark_against_gru,
+    compatibility_check,
+    smoke_train,
+)
 from hai.models.transformer_smoke import (
     TinyCausalDecoder,
     TransformerGovernanceError,
@@ -328,6 +334,19 @@ def main() -> int:
     graph_baseline.add_argument("model", choices=("gnn-v1",))
     graph_baseline.add_argument("--config", type=Path, default=Path("configs/models/gnn.yaml"))
     graph_baseline.add_argument("--split", choices=("validation", "test"), default="validation")
+    mamba = sub.add_parser("mamba", help="check and benchmark the state-space specialist")
+    mamba_sub = mamba.add_subparsers(dest="mamba_command", required=True)
+    compatibility = mamba_sub.add_parser(
+        "compatibility-check", help="probe CPU/AMD GPU state-space compatibility"
+    )
+    compatibility.add_argument("--config", type=Path, default=Path("configs/models/ssm.yaml"))
+    smoke = mamba_sub.add_parser("smoke-train", help="run a short scratch SSM training path")
+    smoke.add_argument("--config", type=Path, default=Path("configs/models/ssm.yaml"))
+    smoke.add_argument("--steps", type=int, default=100)
+    benchmark_mamba = mamba_sub.add_parser("benchmark", help="compare SSM with a frozen GRU")
+    benchmark_mamba.add_argument("--config", type=Path, default=Path("configs/models/ssm.yaml"))
+    benchmark_mamba.add_argument("--against", required=True)
+    benchmark_mamba.add_argument("--steps", type=int, default=100)
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
@@ -444,6 +463,28 @@ def main() -> int:
             )
             print(json.dumps(result, indent=2, sort_keys=True))
         except (GNNEvaluationError, OSError, KeyError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
+        return 0
+    if args.command == "mamba":
+        try:
+            if args.mamba_command == "compatibility-check":
+                result = compatibility_check(args.config, Path.cwd())
+            elif args.mamba_command == "smoke-train":
+                result = smoke_train(args.config, Path.cwd(), args.steps)
+            elif args.mamba_command == "benchmark":
+                result = benchmark_against_gru(
+                    args.config, Path.cwd(), args.against, args.steps
+                )
+            else:
+                return 2
+            result["tracking"] = log_cli_run(
+                f"mamba-{args.mamba_command}",
+                result,
+                tags={"phase": "P19", "command": f"mamba-{args.mamba_command}"},
+                params={"steps": getattr(args, "steps", "none")},
+            )
+            print(json.dumps(result, indent=2, sort_keys=True))
+        except (StateSpaceError, OSError, KeyError, json.JSONDecodeError) as exc:
             parser.error(str(exc))
         return 0
     if args.command == "retrieval":
