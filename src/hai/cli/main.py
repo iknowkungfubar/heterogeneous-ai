@@ -14,6 +14,7 @@ from hai.data.pipeline import (
 from hai.evaluation.benchmark import (
     BenchmarkError,
     evaluate_benchmark,
+    evaluate_system,
     generate_benchmark,
     verify_benchmark,
 )
@@ -51,6 +52,7 @@ from hai.tokenization.bpe import (
     train_tokenizer,
     verify_tokenizer,
 )
+from hai.verification.layer import self_test as verification_self_test
 
 
 def env_check() -> int:
@@ -162,7 +164,9 @@ def main() -> int:
         "evaluate", help="evaluate one expert through the common harness"
     )
     benchmark_evaluate.add_argument("--config", type=Path, required=True)
-    benchmark_evaluate.add_argument("--expert", required=True)
+    benchmark_evaluate_group = benchmark_evaluate.add_mutually_exclusive_group(required=True)
+    benchmark_evaluate_group.add_argument("--expert")
+    benchmark_evaluate_group.add_argument("--system", choices=("router-plus-verifier",))
     benchmark_evaluate.add_argument(
         "--split", choices=("train", "validation", "test"), default="validation"
     )
@@ -170,6 +174,9 @@ def main() -> int:
     expert_sub = expert.add_subparsers(dest="expert_command", required=True)
     expert_self_test = expert_sub.add_parser("self-test", help="verify all core expert adapters")
     expert_self_test.add_argument("--all", action="store_true")
+    verify = sub.add_parser("verify", help="run independent answer verification")
+    verify_sub = verify.add_subparsers(dest="verify_command", required=True)
+    verify_sub.add_parser("self-test", help="exercise verification and rejection paths")
     router = sub.add_parser("router", help="train and evaluate the task router")
     router_sub = router.add_subparsers(dest="router_command", required=True)
     router_dataset = router_sub.add_parser("build-dataset", help="build TRAIN-only router metadata")
@@ -252,12 +259,21 @@ def main() -> int:
             elif args.benchmark_command == "verify":
                 result = verify_benchmark(args.config, Path.cwd())
             elif args.benchmark_command == "evaluate":
-                result = evaluate_benchmark(args.config, Path.cwd(), args.expert, args.split)
+                result = (
+                    evaluate_system(args.config, Path.cwd(), args.system, args.split)
+                    if args.system
+                    else evaluate_benchmark(args.config, Path.cwd(), args.expert, args.split)
+                )
             else:
                 return 2
             print(json.dumps(result, indent=2, sort_keys=True))
         except (BenchmarkError, OSError, KeyError, json.JSONDecodeError) as exc:
             parser.error(str(exc))
+        return 0
+    if args.command == "verify":
+        if args.verify_command != "self-test":
+            return 2
+        print(json.dumps(verification_self_test(), indent=2, sort_keys=True))
         return 0
     if args.command == "expert":
         if args.expert_command != "self-test":
