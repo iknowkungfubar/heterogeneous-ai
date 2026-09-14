@@ -310,3 +310,31 @@ experiments:
     unit_tests_passed: 31
   conclusion: 'The graph store provides deterministic entity/relation IDs, trust-filtered neighbors and paths, persisted provenance, fixture import, explicit conflicts, and idempotent duplicate handling.'
   next_action: 'Advance to P18 graph neural-network specialist after GitHub merge and synchronization.'
+- id: P18-GNN-20260914
+  date: '2026-09-14'
+  hypothesis: 'A small scratch-trained message-passing network adds node-classification value beyond deterministic graph, feature-only MLP, and random baselines.'
+  git_commit: 46ba0e2
+  parent_experiment: P17-KNOWLEDGE-GRAPH-20260914
+  dataset: configs/models/gnn.yaml
+  dataset_hash: 2bbe8387acd0a927f12d39600753545b32d30a3d5c5e9198c21105a73d16678a
+  tokenizer_hash: null
+  model_config: configs/models/gnn.yaml
+  training_config: configs/models/gnn.yaml
+  seed: 1337
+  status: passed-negative-result
+  metrics:
+    train_nodes: 54
+    validation_nodes: 18
+    test_nodes: 18
+    parameter_count: 339
+    start_loss: 1.2013249397
+    final_loss: 0.0035384712
+    gnn_validation_accuracy: 0.5
+    graph_baseline_validation_accuracy: 1.0
+    mlp_validation_accuracy: 0.277777791
+    random_validation_accuracy: 0.5
+    gnn_delta_vs_best_baseline: -0.5
+    retained: false
+    unit_tests_passed: 33
+  conclusion: 'The scratch GNN is reproducible but adds no validation value over the deterministic graph baseline; preserve it as a negative comparison artifact rather than promoting it.'
+  next_action: 'Advance to P19 Mamba/state-space compatibility after GitHub merge and synchronization.'

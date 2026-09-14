@@ -31,6 +31,12 @@ from hai.graph.store import GraphError, GraphStore
 from hai.graph.store import self_test as graph_self_test
 from hai.memory.store import MemoryError, MemoryStore
 from hai.memory.store import self_test as memory_self_test
+from hai.models.gnn import (
+    GNNEvaluationError,
+    compare_gnn,
+    evaluate_gnn,
+    train_gnn,
+)
 from hai.models.gru import (
     GRUGovernanceError,
     GRULanguageModel,
@@ -305,6 +311,23 @@ def main() -> int:
     )
     graph_path.add_argument("--db", type=Path, default=Path("artifacts/graphs/knowledge.sqlite"))
     graph_sub.add_parser("self-test", help="exercise graph provenance and trust controls")
+    gnn = sub.add_parser("gnn", help="train and evaluate a scratch graph neural network")
+    gnn_sub = gnn.add_subparsers(dest="gnn_command", required=True)
+    gnn_train = gnn_sub.add_parser("train", help="train the GNN on graph TRAIN nodes")
+    gnn_train.add_argument("--config", type=Path, default=Path("configs/models/gnn.yaml"))
+    gnn_evaluate = gnn_sub.add_parser("evaluate", help="evaluate the GNN and baselines")
+    gnn_evaluate.add_argument("--config", type=Path, default=Path("configs/models/gnn.yaml"))
+    gnn_evaluate.add_argument("--split", choices=("validation", "test"), default="validation")
+    compare = sub.add_parser(
+        "compare", help="compare learned specialists with deterministic baselines"
+    )
+    compare_sub = compare.add_subparsers(dest="compare_command", required=True)
+    graph_baseline = compare_sub.add_parser(
+        "graph-baseline", help="compare graph baseline with a named model"
+    )
+    graph_baseline.add_argument("model", choices=("gnn-v1",))
+    graph_baseline.add_argument("--config", type=Path, default=Path("configs/models/gnn.yaml"))
+    graph_baseline.add_argument("--split", choices=("validation", "test"), default="validation")
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
@@ -386,6 +409,41 @@ def main() -> int:
             )
             print(json.dumps(result, indent=2, sort_keys=True))
         except (GraphError, OSError, KeyError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
+        return 0
+    if args.command == "gnn":
+        try:
+            if args.gnn_command == "train":
+                result = train_gnn(args.config, Path.cwd())
+            elif args.gnn_command == "evaluate":
+                result = evaluate_gnn(args.config, Path.cwd(), args.split)
+            else:
+                return 2
+            result["tracking"] = log_cli_run(
+                f"gnn-{args.gnn_command}",
+                result,
+                tags={"phase": "P18", "command": f"gnn-{args.gnn_command}"},
+                params={"split": getattr(args, "split", "none")},
+            )
+            print(json.dumps(result, indent=2, sort_keys=True))
+        except (GNNEvaluationError, OSError, KeyError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
+        return 0
+    if args.command == "compare":
+        if args.compare_command != "graph-baseline":
+            return 2
+        try:
+            if args.model != "gnn-v1":
+                return 2
+            result = compare_gnn(args.config, Path.cwd(), args.split)
+            result["tracking"] = log_cli_run(
+                f"compare-{args.model}",
+                result,
+                tags={"phase": "P18", "command": "compare-graph-baseline", "split": args.split},
+                params={"model": args.model, "split": args.split},
+            )
+            print(json.dumps(result, indent=2, sort_keys=True))
+        except (GNNEvaluationError, OSError, KeyError, json.JSONDecodeError) as exc:
             parser.error(str(exc))
         return 0
     if args.command == "retrieval":

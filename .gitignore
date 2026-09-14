@@ -28,6 +28,7 @@ artifacts/routers/**
 artifacts/calibration/**
 artifacts/ablations/**
 artifacts/retrieval/**
+artifacts/gnn/**
 artifacts/environment/**
 artifacts/mlflow/**
 !artifacts/**/.gitkeep
