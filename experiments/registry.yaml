@@ -427,3 +427,30 @@ experiments:
     unit_tests_passed: 39
   conclusion: 'Scratch image/text encoders exceeded seeded random class-aware recall@1 in both directions with hash-bound paired data and reproducible artifacts.'
   next_action: 'Advance to P22 multimodal fusion and visual reasoning after GitHub merge and synchronization.'
+- id: P22-VISUAL-OBJECTIVE-20260914
+  date: '2026-09-14'
+  hypothesis: 'Fused image/question models beat unimodal and random baselines, while cross-attention is retained only if it improves over projection fusion.'
+  git_commit: PENDING_FINAL_COMMIT
+  parent_experiment: P21-IMAGE-TEXT-20260914
+  dataset: configs/models/fusion.yaml
+  dataset_hash: bb68da9d45b70d3a5c98f8f50bc2100e2a42dd80b3d1ee3f86034568908ca089
+  tokenizer_hash: null
+  model_config: configs/models/fusion.yaml
+  training_config: configs/models/fusion.yaml
+  seed: 1337
+  status: passed
+  metrics:
+    train_records: 1152
+    validation_records: 384
+    test_records: 384
+    projection_parameters: 4114
+    cross_attention_parameters: 8338
+    projection_validation_accuracy: 0.75
+    cross_attention_validation_accuracy: 0.75
+    unimodal_baseline_accuracy: 0.5
+    random_baseline_accuracy: 0.4921875
+    retained_variant: projection
+    source_image_split_isolation: true
+    unit_tests_passed: 41
+  conclusion: 'Both fusion variants beat unimodal/random visual reasoning baselines; projection is retained because cross-attention adds no accuracy.'
+  next_action: 'Advance to P23 audio specialist from scratch after GitHub merge and synchronization.'

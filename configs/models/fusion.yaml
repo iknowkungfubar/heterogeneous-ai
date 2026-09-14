@@ -1,0 +1,13 @@
+id: visual-objective-v1
+architecture: projection_and_cross_attention_ablation
+initialization: random
+seed: 1337
+samples: 480
+fusion_dim: 32
+hidden_dim: 48
+patch_size: 4
+attention_heads: 4
+training_steps: 60
+batch_size: 64
+learning_rate: 0.003
+output_dir: artifacts/multimodal/fusion-v1
