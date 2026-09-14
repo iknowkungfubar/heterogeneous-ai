@@ -1,60 +1,99 @@
 # Heterogeneous AI Research Platform
 
-A local-first research project for building and evaluating a **heterogeneous multimodal AI system from scratch** on consumer hardware. Instead of relying on one large language model, the system combines small specialist neural architectures with deterministic reasoning, explicit memory, retrieval, graphs, perception, world modeling, verification, calibrated uncertainty, and learned orchestration.
+[![CI](https://github.com/iknowkungfubar/heterogeneous-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/iknowkungfubar/heterogeneous-ai/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## Start here
+A local-first research platform for testing whether a collection of small, diverse specialists can outperform a more homogeneous language-model baseline at comparable practical compute.
 
-1. Read `MASTER_RUNBOOK.md` — the authoritative specification.
-2. Read `AGENTS.md` — mandatory rules for AI coding agents.
-3. Read `docs/status/phase-state.yaml` — the current execution state.
-4. Read the first `ready` phase under `docs/phase-plans/`.
-5. Execute only that phase until its acceptance gate passes.
+The project combines scratch-trained neural models with deterministic reasoning, explicit memory, retrieval, provenance, verification, calibrated uncertainty, and constrained orchestration. It is deliberately evidence-driven: a component remains only when measured experiments show that it earns its complexity.
 
-For a new clone, the first phase is `P00`.
+## Current status
 
-## Research hypothesis
+This repository is an early-stage, governed research scaffold. Work proceeds through dependency-ordered phases, beginning with repository bootstrap and environment validation. Later architecture entries describe the target research program; they are not claims that every listed subsystem is already implemented.
 
-> Can small, architecturally diverse specialist models plus deterministic reasoning, explicit memory, verification, calibrated uncertainty, and learned routing outperform a substantially more homogeneous language-model baseline at similar practical active compute?
+The primary research track is trained from random initialization. External pretrained neural checkpoints are not silently used. Negative results, failed experiments, and rejected components remain part of the scientific record.
 
-A negative result is valid. Components must earn their place through measured contribution.
+## Research question
 
-## Final target
+> Can architecturally diverse specialist models plus deterministic reasoning, explicit memory, verification, calibrated uncertainty, and learned routing improve quality, coverage, and efficiency over a substantially more homogeneous baseline?
 
-The mature system can include:
+Quality is evaluated together with coverage, latency, active experts, memory, and compute. A negative result is a valid result.
 
-- scratch-trained Transformer language specialist;
-- GRU and/or Mamba/SSM sequence specialist;
-- deterministic symbolic solver;
-- scratch-trained embedding/retrieval model;
-- explicit working, episodic, semantic, relational, and procedural memory;
-- provenance-aware knowledge graph and GNN specialist;
-- scratch-trained vision and audio specialists;
-- multimodal alignment and fusion;
-- world model and deterministic planner;
-- learned task router and constrained compute-aware RL orchestration;
-- independent verification, confidence calibration, consensus, and abstention;
-- local CLI/API, experiment registry, model/data cards, regression tests, and full ablation reports.
+## Target architecture
+
+```text
+input and modality manager
+            │
+      typed representations
+            │
+       executive router
+            │
+  specialists and deterministic tools
+            │
+ evidence + provenance + calibration
+            │
+ verification → consensus → answer or abstain
+            │
+       traceable experience/memory
+```
+
+The planned specialist set includes a scratch-trained Transformer, an independent sequence model, symbolic reasoning, retrieval and explicit memory, graph reasoning, vision, audio, multimodal alignment, planning, and constrained expert orchestration. Each phase has its own acceptance gate; later work does not bypass an unmet gate.
+
+## Reproducible project contract
+
+The repository is governed by these documents:
+
+- [`MASTER_RUNBOOK.md`](MASTER_RUNBOOK.md) — authoritative specification and lifecycle.
+- [`AGENTS.md`](AGENTS.md) — operating contract for coding agents and contributors.
+- [`docs/status/phase-state.yaml`](docs/status/phase-state.yaml) — machine-readable progress state.
+- [`docs/task-graph.yaml`](docs/task-graph.yaml) — phase dependencies and deliverables.
+- [`docs/phase-plans/`](docs/phase-plans/) — executable plans for P00–P35.
+- [`experiments/registry.yaml`](experiments/registry.yaml) — experiment record contract.
+
+The execution rule is simple: inspect the current state, work only on the first dependency-ready phase, capture evidence, and do not mark a gate passed without direct evidence.
+
+## Quick start
+
+```bash
+git clone https://github.com/iknowkungfubar/heterogeneous-ai.git
+cd heterogeneous-ai
+
+python scripts/verify-scaffold.py
+python scripts/check-phase.py
+```
+
+These checks validate the repository scaffold and identify the first phase that is eligible to run. The ROCm/PyTorch environment is containerized; do not install the full research stack globally on the host. Review [`START_HERE.md`](START_HERE.md) before beginning work.
 
 ## Repository map
 
-- `MASTER_RUNBOOK.md` — master specification and lifecycle.
-- `docs/phase-plans/` — executable plans for P00 through P35.
-- `docs/task-graph.yaml` — dependency graph and deliverables.
-- `docs/status/phase-state.yaml` — mutable progress state.
-- `configs/` — environment, data, model, training, routing, and evaluation configs.
-- `experiments/` — experiment registry and immutable run records.
-- `src/hai/` — implementation package.
-- `tests/` — unit, integration, smoke, regression, and acceptance tests.
-- `artifacts/` — local generated outputs; large artifacts are ignored by Git.
+| Path | Purpose |
+| --- | --- |
+| `src/hai/` | Python package and specialist boundaries |
+| `tests/` | Unit, integration, smoke, regression, and acceptance tests |
+| `configs/` | Environment, data, model, training, routing, and evaluation configuration |
+| `scripts/` | Scaffold, environment, experiment, and verification commands |
+| `docs/` | Architecture, phase plans, decisions, cards, and evidence templates |
+| `experiments/` | Registry and immutable run-record boundary |
+| `data/` | Data-layout placeholders and manifests; raw data is not committed |
+| `artifacts/` | Generated-artifact layout; checkpoints and large outputs are ignored |
 
-## Important boundary
+## Data and model integrity
 
-This project uses software libraries such as PyTorch, but the primary research track does **not** use pretrained neural weights. A model created from a library configuration with random initialization is allowed; an external pretrained checkpoint is not.
+- TRAIN, VALIDATION, and TEST have separate roles; test data is not used for tuning.
+- Datasets, licenses, provenance, tokenizers, configurations, seeds, metrics, and checkpoint hashes are recorded for meaningful runs.
+- The primary track starts neural weights randomly and records any checkpoint origin and hash.
+- Generated checkpoints, raw datasets, secrets, and local service state are excluded from Git.
 
-## Hardware reference
+## Security and responsible contribution
 
-The initial reference machine is a Linux consumer PC with one AMD Radeon RX 7900 GRE-class GPU (16 GB VRAM), approximately 32 GB system RAM, and an 8-core-class CPU. The runtime is containerized so the host desktop distribution does not become the ML dependency environment.
+Read [`SECURITY.md`](SECURITY.md) before adding data, tools, services, or model capabilities. Neural and reinforcement-learning components do not receive unrestricted host-shell access; tools are allowlisted and structured. Do not commit credentials, private data, downloaded checkpoints, or unreviewed datasets.
+
+Please read [`CONTRIBUTING.md`](CONTRIBUTING.md) and the relevant phase plan before opening a pull request. Keep changes narrow, add tests, preserve provenance, and document architecture deviations with an ADR.
+
+## Hardware and runtime
+
+The initial reference target is a Linux consumer system with an AMD Radeon RX 7900 GRE-class GPU and approximately 16 GB VRAM. The supported research environment is the pinned ROCm/PyTorch container described in [`configs/environments/rocm.yaml`](configs/environments/rocm.yaml). GPU and host setup require explicit validation before later training phases.
 
 ## License
 
-MIT for repository code and documentation. Individual datasets and third-party dependencies retain their own licenses and must be tracked in data/model cards.
+Repository code and documentation are licensed under the MIT License. Dataset, model, and third-party dependency licenses remain applicable and must be documented in their respective cards.

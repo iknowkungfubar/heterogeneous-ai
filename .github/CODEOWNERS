@@ -1,0 +1,3 @@
+# Default ownership for the public repository. CODEOWNERS is intentionally
+# small so every change receives a clear maintainer notification.
+* @iknowkungfubar
