@@ -341,7 +341,7 @@ experiments:
 - id: P19-SSM-20260914
   date: '2026-09-14'
   hypothesis: 'A plain-PyTorch state-space recurrence can train stably on AMD/ROCm and provide a useful quality/throughput tradeoff against GRU-0001.'
-  git_commit: PENDING_FINAL_COMMIT
+  git_commit: 3da8b5b
   parent_experiment: P18-GNN-20260914
   dataset: configs/models/ssm.yaml
   dataset_hash: 19320dce27dc00cd00f95dd0006e062dd64c7529f5be824d3b012988ddafadcf
