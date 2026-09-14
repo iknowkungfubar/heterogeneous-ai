@@ -17,6 +17,7 @@ from hai.evaluation.benchmark import (
     generate_benchmark,
     verify_benchmark,
 )
+from hai.experts.protocol import core_experts
 from hai.models.gru import (
     GRUGovernanceError,
     GRULanguageModel,
@@ -147,6 +148,10 @@ def main() -> int:
     benchmark_evaluate.add_argument(
         "--split", choices=("train", "validation", "test"), default="validation"
     )
+    expert = sub.add_parser("expert", help="run unified expert protocol checks")
+    expert_sub = expert.add_subparsers(dest="expert_command", required=True)
+    expert_self_test = expert_sub.add_parser("self-test", help="verify all core expert adapters")
+    expert_self_test.add_argument("--all", action="store_true")
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
@@ -217,6 +222,31 @@ def main() -> int:
             print(json.dumps(result, indent=2, sort_keys=True))
         except (BenchmarkError, OSError, KeyError, json.JSONDecodeError) as exc:
             parser.error(str(exc))
+        return 0
+    if args.command == "expert":
+        if args.expert_command != "self-test":
+            return 2
+        results = []
+        for expert_id, adapter in core_experts().items():
+            result = adapter.answer(f"self-test:{expert_id}", "3*x + 4 = 19")
+            results.append(
+                {
+                    "expert": expert_id,
+                    "status": result.status,
+                    "serialized": bool(result.to_dict()),
+                    "model_version": result.model_version,
+                    "has_evidence": bool(result.evidence),
+                }
+            )
+        print(
+            json.dumps(
+                {
+                    "ok": all(item["serialized"] and item["has_evidence"] for item in results),
+                    "experts": results,
+                },
+                indent=2,
+            )
+        )
         return 0
     if args.command == "model":
         try:

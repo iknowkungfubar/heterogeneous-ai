@@ -1,5 +1,5 @@
 project: heterogeneous-ai
-current_phase: P10
+current_phase: P11
 status: ready
 phases:
   P00:
@@ -88,14 +88,15 @@ phases:
     notes: 'Seven-category deterministic benchmark generated with 84 records per split, verified hash/disjointness, exact symbolic validation scoring, and explicit not-applicable statuses for learned experts without structured adapters.'
   P10:
     name: Unified expert protocol and provenance
-    status: ready
+    status: passed
     depends_on:
     - P09
-    evidence: []
-    notes: ''
+    evidence:
+    - docs/experiment-reports/P10-unified-expert-protocol-2026-09-14.md
+    notes: 'Versioned ExpertResult/EvidenceRef contracts and three core adapters verified with serialization, provenance, latency/status fields, and explicit not-applicable learned states.'
   P11:
     name: Learned task router
-    status: blocked
+    status: ready
     depends_on:
     - P10
     evidence: []
