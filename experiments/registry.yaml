@@ -402,7 +402,7 @@ experiments:
 - id: P21-IMAGE-TEXT-20260914
   date: '2026-09-14'
   hypothesis: 'Scratch image and text encoders can learn a shared representation space and exceed random retrieval in both directions.'
-  git_commit: PENDING_FINAL_COMMIT
+  git_commit: 26c0f51
   parent_experiment: P20-VISION-20260914
   dataset: docs/dataset-cards/procedural-shapes-v1.md
   dataset_hash: 853cbe143d23b50913a313f02921689e7fcead89789a0cfee0e35307c43a4125
