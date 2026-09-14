@@ -1,17 +1,25 @@
 schema_version: 1
-experiments: []
-# Each entry must contain at least:
-# - id
-# - date
-# - hypothesis
-# - git_commit
-# - parent_experiment
-# - dataset + hash
-# - tokenizer hash
-# - model config
-# - training config
-# - seed
-# - status: planned|running|passed|failed|aborted|invalid|blocked
-# - metrics
-# - conclusion
-# - next_action
+experiments:
+- id: P02-GPU-20260914
+  date: '2026-09-13'
+  hypothesis: PyTorch GPU forward/backward, optimizer, finite-loss, memory, and checkpoint
+    smoke path works in the validated ROCm container.
+  git_commit: 6d7808e
+  parent_experiment: null
+  dataset: null
+  dataset_hash: null
+  tokenizer_hash: null
+  model_config: 'src/hai/training/linear_smoke.py: torch.nn.Linear(1, 1)'
+  training_config: 'seed=1337, optimizer=AdamW, learning_rate=0.01, steps=2000'
+  seed: 1337
+  status: passed
+  metrics:
+    weight: 2.980123
+    bias: 1.995303
+    loss: 0.01321094
+    peak_memory_bytes: 159630336
+    gpu_tests_passed: 2
+    full_non_slow_tests_passed: 4
+    checkpoint_round_trip: true
+  conclusion: 'GPU forward/backward, optimizer, finite-loss, memory, and checkpoint smoke passed.'
+  next_action: 'Begin P03 data governance and dataset pipeline.'
