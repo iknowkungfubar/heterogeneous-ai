@@ -27,6 +27,8 @@ from hai.evaluation.benchmark import (
     verify_benchmark,
 )
 from hai.experts.protocol import core_experts
+from hai.graph.store import GraphError, GraphStore
+from hai.graph.store import self_test as graph_self_test
 from hai.memory.store import MemoryError, MemoryStore
 from hai.memory.store import self_test as memory_self_test
 from hai.models.gru import (
@@ -276,6 +278,33 @@ def main() -> int:
         "--type", choices=("working", "episodic", "semantic", "procedural")
     )
     memory_inspect.add_argument("--db", type=Path, default=Path("artifacts/memory/memory.sqlite"))
+    graph = sub.add_parser("graph", help="manage provenance-aware knowledge graphs")
+    graph_sub = graph.add_subparsers(dest="graph_command", required=True)
+    graph_init = graph_sub.add_parser("init", help="initialize the graph database")
+    graph_init.add_argument("--db", type=Path, default=Path("artifacts/graphs/knowledge.sqlite"))
+    graph_fixture = graph_sub.add_parser(
+        "import-fixture", help="import deterministic JSONL graph records"
+    )
+    graph_fixture.add_argument("path", type=Path)
+    graph_fixture.add_argument("--db", type=Path, default=Path("artifacts/graphs/knowledge.sqlite"))
+    graph_query = graph_sub.add_parser("query", help="list trusted outgoing relations")
+    graph_query.add_argument("--subject")
+    graph_query.add_argument("--entity", dest="subject")
+    graph_query.add_argument("--predicate")
+    graph_query.add_argument("--relation", dest="predicate")
+    graph_query.add_argument(
+        "--min-trust", choices=("verified", "candidate", "untrusted"), default="verified"
+    )
+    graph_query.add_argument("--db", type=Path, default=Path("artifacts/graphs/knowledge.sqlite"))
+    graph_path = graph_sub.add_parser("path", help="find a deterministic trusted path")
+    graph_path.add_argument("--start", required=True)
+    graph_path.add_argument("--goal", required=True)
+    graph_path.add_argument("--max-hops", type=int, default=4)
+    graph_path.add_argument(
+        "--min-trust", choices=("verified", "candidate", "untrusted"), default="verified"
+    )
+    graph_path.add_argument("--db", type=Path, default=Path("artifacts/graphs/knowledge.sqlite"))
+    graph_sub.add_parser("self-test", help="exercise graph provenance and trust controls")
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
@@ -303,6 +332,60 @@ def main() -> int:
             )
             print(json.dumps(result, indent=2, sort_keys=True))
         except (MemoryError, OSError, KeyError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
+        return 0
+    if args.command == "graph":
+        try:
+            if args.graph_command == "init":
+                store = GraphStore(args.db)
+                store.close()
+                result = {"ok": True, "path": str(args.db)}
+            elif args.graph_command == "import-fixture":
+                store = GraphStore(args.db)
+                try:
+                    result = store.import_fixture(args.path)
+                finally:
+                    store.close()
+            elif args.graph_command == "query":
+                if not args.subject:
+                    parser.error("graph query requires --subject or --entity")
+                store = GraphStore(args.db)
+                try:
+                    matches = store.find_entities(args.subject)
+                    if not matches:
+                        raise GraphError(f"entity label not found: {args.subject}")
+                    relations = []
+                    for entity in matches:
+                        relations.extend(
+                            store.neighbors(
+                                entity["id"],
+                                relation_type=args.predicate,
+                                min_trust=args.min_trust,
+                            )
+                        )
+                    result = {"entities": matches, "relations": relations, "count": len(relations)}
+                finally:
+                    store.close()
+            elif args.graph_command == "path":
+                store = GraphStore(args.db)
+                try:
+                    result = store.path(
+                        args.start, args.goal, max_hops=args.max_hops, min_trust=args.min_trust
+                    )
+                finally:
+                    store.close()
+            elif args.graph_command == "self-test":
+                result = graph_self_test()
+            else:
+                return 2
+            result["tracking"] = log_cli_run(
+                f"graph-{args.graph_command}",
+                result,
+                tags={"phase": "P17", "command": f"graph-{args.graph_command}"},
+                params={"min_trust": getattr(args, "min_trust", "none")},
+            )
+            print(json.dumps(result, indent=2, sort_keys=True))
+        except (GraphError, OSError, KeyError, json.JSONDecodeError) as exc:
             parser.error(str(exc))
         return 0
     if args.command == "retrieval":

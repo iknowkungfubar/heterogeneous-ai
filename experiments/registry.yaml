@@ -286,3 +286,27 @@ experiments:
     provenance_round_trip: true
   conclusion: 'Working, episodic, semantic, and procedural SQLite stores enforce candidate-first trust, evidence-backed validation, conflict visibility, duplicate suppression, tombstone retention, and provenance round trips.'
   next_action: 'Advance to P17 provenance-aware knowledge graph after GitHub merge and synchronization.'
+- id: P17-KNOWLEDGE-GRAPH-20260914
+  date: '2026-09-14'
+  hypothesis: 'A deterministic SQLite graph can expose provenance-aware trusted traversal while retaining contradictory and untrusted edges explicitly.'
+  git_commit: 0080065
+  parent_experiment: P16-MEMORY-20260914
+  dataset: tests/fixtures/graph.jsonl
+  dataset_hash: null
+  tokenizer_hash: null
+  model_config: src/hai/graph/store.py
+  training_config: null
+  seed: null
+  status: passed
+  metrics:
+    entities: 3
+    relations: 3
+    verified_relation_count: 1
+    untrusted_relation_count: 1
+    deterministic_path_hops: 2
+    provenance_round_trip: true
+    explicit_conflict: true
+    duplicate_status: duplicate
+    unit_tests_passed: 31
+  conclusion: 'The graph store provides deterministic entity/relation IDs, trust-filtered neighbors and paths, persisted provenance, fixture import, explicit conflicts, and idempotent duplicate handling.'
+  next_action: 'Advance to P18 graph neural-network specialist after GitHub merge and synchronization.'
