@@ -1,5 +1,5 @@
 project: heterogeneous-ai
-current_phase: P16
+current_phase: P17
 status: ready
 phases:
   P00:
@@ -136,14 +136,15 @@ phases:
     notes: 'Random-initialized dual encoder trained on 512 TRAIN stories; dense retrieval beat random and hybrid beat lexical on 256 VALIDATION queries with manifest-bound provenance.'
   P16:
     name: Working, episodic, semantic, and procedural memory
-    status: ready
+    status: passed
     depends_on:
     - P15
-    evidence: []
-    notes: ''
+    evidence:
+    - docs/experiment-reports/P16-memory-stores-2026-09-14.md
+    notes: 'Four explicit SQLite memory types passed trust, provenance, duplicate/conflict, relationship, and retention self-tests; model output remains untrusted until evidence-backed validation.'
   P17:
     name: Knowledge graph
-    status: blocked
+    status: ready
     depends_on:
     - P16
     evidence: []
