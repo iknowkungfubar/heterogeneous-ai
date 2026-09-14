@@ -1,5 +1,5 @@
 project: heterogeneous-ai
-current_phase: P21
+current_phase: P22
 status: ready
 phases:
   P00:
@@ -176,14 +176,15 @@ phases:
     notes: 'Deterministic procedural image data, scratch patch/Transformer encoder training, held-out validation, and checkpoint-bound evaluation passed; no external image download was used.'
   P21:
     name: Image-text representation alignment
-    status: ready
+    status: passed
     depends_on:
     - P20
-    evidence: []
-    notes: ''
+    evidence:
+    - docs/experiment-reports/P21-image-text-alignment-2026-09-14.md
+    notes: 'Scratch image/text encoders passed leakage-resistant paired-data verification and exceeded seeded random recall@1 in both retrieval directions.'
   P22:
     name: Multimodal fusion and visual reasoning
-    status: blocked
+    status: ready
     depends_on:
     - P21
     evidence: []

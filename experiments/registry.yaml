@@ -399,3 +399,31 @@ experiments:
     unit_tests_passed: 37
   conclusion: 'The random-initialized patch/Transformer vision encoder learned the procedural four-class image task with 1.0 VALIDATION accuracy; TEST remains reserved for a frozen evaluation.'
   next_action: 'Advance to P21 image-text representation alignment after GitHub merge and synchronization.'
+- id: P21-IMAGE-TEXT-20260914
+  date: '2026-09-14'
+  hypothesis: 'Scratch image and text encoders can learn a shared representation space and exceed random retrieval in both directions.'
+  git_commit: PENDING_FINAL_COMMIT
+  parent_experiment: P20-VISION-20260914
+  dataset: docs/dataset-cards/procedural-shapes-v1.md
+  dataset_hash: 853cbe143d23b50913a313f02921689e7fcead89789a0cfee0e35307c43a4125
+  tokenizer_hash: null
+  model_config: configs/models/multimodal.yaml
+  training_config: configs/models/multimodal.yaml
+  seed: 1337
+  status: passed
+  metrics:
+    train_pairs: 288
+    validation_pairs: 96
+    test_pairs: 96
+    parameter_count: 2913
+    training_steps: 80
+    image_to_text_recall_at_1: 0.8229166865
+    text_to_image_recall_at_1: 1.0
+    random_recall_at_1: 0.3125
+    image_to_text_mrr: 0.8266119957
+    text_to_image_mrr: 1.0
+    leakage_resistant_split: true
+    external_download: false
+    unit_tests_passed: 39
+  conclusion: 'Scratch image/text encoders exceeded seeded random class-aware recall@1 in both directions with hash-bound paired data and reproducible artifacts.'
+  next_action: 'Advance to P22 multimodal fusion and visual reasoning after GitHub merge and synchronization.'
