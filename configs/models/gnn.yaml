@@ -1,5 +1,14 @@
 id: gnn-v1
-architecture: simple_message_passing
 initialization: random
-implementation_first: plain_pytorch
-promotion_requires_benefit_over_deterministic_graph_baseline: true
+seed: 1337
+nodes: 90
+classes: 3
+feature_dim: 8
+hidden_dim: 16
+same_class_edge_probability: 0.55
+different_class_edge_probability: 0.06
+train_fraction: 0.6
+validation_fraction: 0.2
+training_steps: 120
+learning_rate: 0.02
+output_dir: artifacts/gnn/gnn-v1

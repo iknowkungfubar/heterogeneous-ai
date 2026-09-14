@@ -1,5 +1,5 @@
 project: heterogeneous-ai
-current_phase: P18
+current_phase: P19
 status: ready
 phases:
   P00:
@@ -152,14 +152,15 @@ phases:
     notes: 'Deterministic SQLite graph operations, trust-filtered traversal, provenance round trips, fixture import, duplicate idempotency, and explicit conflicts passed.'
   P18:
     name: Graph neural-network specialist
-    status: ready
+    status: passed
     depends_on:
     - P17
-    evidence: []
-    notes: ''
+    evidence:
+    - docs/experiment-reports/P18-gnn-specialist-2026-09-14.md
+    notes: 'Scratch-trained GNN reproducibility passed, but validation accuracy was 0.50 versus 1.00 for the deterministic graph baseline; the learned specialist is not retained.'
   P19:
     name: Mamba/state-space compatibility and specialist
-    status: blocked
+    status: ready
     depends_on:
     - P18
     evidence: []
