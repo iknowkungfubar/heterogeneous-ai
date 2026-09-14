@@ -1,0 +1,13 @@
+id: core-objective-v1
+split_seed: 1337
+categories:
+  arithmetic: true
+  linear_equations: true
+  boolean_logic: true
+  constraints: true
+  graph_paths: true
+  deterministic_sequences: true
+  language_classification: true
+principles:
+  programmatic_ground_truth_where_possible: true
+  separate_train_validation_test_generators_or_partitions: true

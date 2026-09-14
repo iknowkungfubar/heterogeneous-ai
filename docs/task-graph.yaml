@@ -1,0 +1,252 @@
+schema_version: 1
+policy:
+  execute_first_dependency_ready_only: true
+  phase_plan_directory: docs/phase-plans
+phases:
+  P00:
+    name: Repository bootstrap
+    depends_on: []
+    goal: Create the governed repository, documentation set, status files, and reproducible
+      project skeleton.
+    plan: docs/phase-plans/P00-repository-bootstrap.md
+  P01:
+    name: Host, GPU, Docker, and ROCm environment
+    depends_on:
+    - P00
+    goal: Verify the AMD GPU compute path and create a pinned ROCm/PyTorch container
+      environment.
+    plan: docs/phase-plans/P01-host-gpu-docker-and-rocm-environment.md
+  P02:
+    name: PyTorch fundamentals and GPU training smoke tests
+    depends_on:
+    - P01
+    goal: Prove tensors, forward/backward passes, optimization, checkpoint basics,
+      and GPU memory reporting work.
+    plan: docs/phase-plans/P02-pytorch-fundamentals-and-gpu-training-smoke-tests.md
+  P03:
+    name: Data governance and dataset pipeline
+    depends_on:
+    - P02
+    goal: Create licensed, checksummed, immutable raw-data ingestion and deterministic
+      train/validation/test processing.
+    plan: docs/phase-plans/P03-data-governance-and-dataset-pipeline.md
+  P04:
+    name: Tokenizer from scratch
+    depends_on:
+    - P03
+    goal: Train, test, version, and freeze a project-owned BPE tokenizer using training
+      data only.
+    plan: docs/phase-plans/P04-tokenizer-from-scratch.md
+  P05:
+    name: Tiny Transformer pipeline smoke model
+    depends_on:
+    - P04
+    goal: Prove the complete causal-language-model training, checkpoint, resume, evaluation,
+      and generation pipeline cheaply.
+    plan: docs/phase-plans/P05-tiny-transformer-pipeline-smoke-model.md
+  P06:
+    name: Scratch-trained Transformer baseline
+    depends_on:
+    - P05
+    goal: "Train and freeze the first meaningful 25\u201335M parameter language-model\
+      \ baseline."
+    plan: docs/phase-plans/P06-scratch-trained-transformer-baseline.md
+  P07:
+    name: Independent sequence specialist
+    depends_on:
+    - P06
+    goal: Train a structurally different GRU sequence model and quantify complementary
+      errors.
+    plan: docs/phase-plans/P07-independent-sequence-specialist.md
+  P08:
+    name: Deterministic symbolic reasoning specialist
+    depends_on:
+    - P07
+    goal: Implement exact arithmetic, algebra, logic, constraints, graph, unit, and
+      date reasoning interfaces.
+    plan: docs/phase-plans/P08-deterministic-symbolic-reasoning-specialist.md
+  P09:
+    name: Objective benchmark framework
+    depends_on:
+    - P08
+    goal: Build reproducible, leakage-resistant benchmark generators and held-out
+      evaluation splits.
+    plan: docs/phase-plans/P09-objective-benchmark-framework.md
+  P10:
+    name: Unified expert protocol and provenance
+    depends_on:
+    - P09
+    goal: Give all specialists a stable answer/evidence/confidence/provenance interface.
+    plan: docs/phase-plans/P10-unified-expert-protocol-and-provenance.md
+  P11:
+    name: Learned task router
+    depends_on:
+    - P10
+    goal: Train an interpretable router that selects only useful specialists for each
+      task.
+    plan: docs/phase-plans/P11-learned-task-router.md
+  P12:
+    name: Verification layer
+    depends_on:
+    - P11
+    goal: Implement deterministic and evidence-backed verification independent of
+      model confidence.
+    plan: docs/phase-plans/P12-verification-layer.md
+  P13:
+    name: Calibration, consensus, and abstention
+    depends_on:
+    - P12
+    goal: Calibrate confidence, rank evidence, resolve conflicts, and abstain when
+      support is insufficient.
+    plan: docs/phase-plans/P13-calibration-consensus-and-abstention.md
+  P14:
+    name: Core heterogeneous ablation study and M2 freeze
+    depends_on:
+    - P13
+    goal: Demonstrate whether the heterogeneous core beats the Transformer baseline
+      and freeze M2.
+    plan: docs/phase-plans/P14-core-heterogeneous-ablation-study-and-m2-freeze.md
+  P15:
+    name: Scratch-trained semantic retrieval
+    depends_on:
+    - P14
+    goal: Train a dual encoder from scratch and implement hybrid lexical+dense retrieval
+      with provenance.
+    plan: docs/phase-plans/P15-scratch-trained-semantic-retrieval.md
+  P16:
+    name: Working, episodic, semantic, and procedural memory
+    depends_on:
+    - P15
+    goal: Build explicit memory stores with provenance, trust, retention, and retrieval
+      rules.
+    plan: docs/phase-plans/P16-working-episodic-semantic-and-procedural-memory.md
+  P17:
+    name: Knowledge graph
+    depends_on:
+    - P16
+    goal: Create a provenance-aware relational memory and deterministic graph query
+      layer.
+    plan: docs/phase-plans/P17-knowledge-graph.md
+  P18:
+    name: Graph neural-network specialist
+    depends_on:
+    - P17
+    goal: Train a small GNN and determine whether learned relational reasoning adds
+      value beyond graph algorithms.
+    plan: docs/phase-plans/P18-graph-neural-network-specialist.md
+  P19:
+    name: Mamba/state-space compatibility and specialist
+    depends_on:
+    - P18
+    goal: Validate AMD/ROCm support, train an SSM specialist, and compare it against
+      the GRU.
+    plan: docs/phase-plans/P19-mamba-state-space-compatibility-and-specialist.md
+  P20:
+    name: Vision specialist from scratch
+    depends_on:
+    - P19
+    goal: Train and evaluate a small vision encoder/model using controlled image tasks.
+    plan: docs/phase-plans/P20-vision-specialist-from-scratch.md
+  P21:
+    name: Image-text representation alignment
+    depends_on:
+    - P20
+    goal: Train scratch image/text encoders into a shared representation space and
+      evaluate retrieval.
+    plan: docs/phase-plans/P21-image-text-representation-alignment.md
+  P22:
+    name: Multimodal fusion and visual reasoning
+    depends_on:
+    - P21
+    goal: Fuse visual and language representations and benchmark objective multimodal
+      reasoning.
+    plan: docs/phase-plans/P22-multimodal-fusion-and-visual-reasoning.md
+  P23:
+    name: Audio specialist from scratch
+    depends_on:
+    - P22
+    goal: Train a small audio model on classification/representation tasks before
+      speech.
+    plan: docs/phase-plans/P23-audio-specialist-from-scratch.md
+  P24:
+    name: Audio-text alignment and speech
+    depends_on:
+    - P23
+    goal: Align speech/audio with text and add measurable speech understanding/recognition.
+    plan: docs/phase-plans/P24-audio-text-alignment-and-speech.md
+  P25:
+    name: Unified multimodal router and expert orchestration
+    depends_on:
+    - P24
+    goal: Route text, image, audio, graph, symbolic, retrieval, and mixed tasks efficiently.
+    plan: docs/phase-plans/P25-unified-multimodal-router-and-expert-orchestration.md
+  P26:
+    name: World model
+    depends_on:
+    - P25
+    goal: Train a transition/world model in controlled environments and measure rollout
+      error.
+    plan: docs/phase-plans/P26-world-model.md
+  P27:
+    name: Planning and counterfactual reasoning
+    depends_on:
+    - P26
+    goal: Use deterministic search and the world model to plan and compare predicted
+      futures.
+    plan: docs/phase-plans/P27-planning-and-counterfactual-reasoning.md
+  P28:
+    name: Compute-aware reinforcement learning orchestration
+    depends_on:
+    - P27
+    goal: Train constrained RL policies to trade verified correctness against expert/computation
+      cost.
+    plan: docs/phase-plans/P28-compute-aware-reinforcement-learning-orchestration.md
+  P29:
+    name: Continual learning and regression protection
+    depends_on:
+    - P28
+    goal: Add controlled updates, replay, memory-first factual learning, and anti-forgetting
+      gates.
+    plan: docs/phase-plans/P29-continual-learning-and-regression-protection.md
+  P30:
+    name: Performance optimization and model lifecycle
+    depends_on:
+    - P29
+    goal: Profile, lazily load, cache, quantize, and manage specialists without sacrificing
+      measured correctness.
+    plan: docs/phase-plans/P30-performance-optimization-and-model-lifecycle.md
+  P31:
+    name: Local CLI and inference service
+    depends_on:
+    - P30
+    goal: Expose the system through a safe local CLI/API with trace IDs, health, and
+      model status.
+    plan: docs/phase-plans/P31-local-cli-and-inference-service.md
+  P32:
+    name: Security, robustness, and fault isolation
+    depends_on:
+    - P31
+    goal: Harden tool boundaries, datasets, memory, model artifacts, inputs, dependencies,
+      and component failure behavior.
+    plan: docs/phase-plans/P32-security-robustness-and-fault-isolation.md
+  P33:
+    name: Comprehensive benchmark and reliability suite
+    depends_on:
+    - P32
+    goal: Evaluate every supported domain, uncertainty behavior, fault injection,
+      and efficiency dimension.
+    plan: docs/phase-plans/P33-comprehensive-benchmark-and-reliability-suite.md
+  P34:
+    name: Final ablation, scaling, and scientific analysis
+    depends_on:
+    - P33
+    goal: Measure component contribution, statistical uncertainty, scaling behavior,
+      and complexity/value tradeoffs.
+    plan: docs/phase-plans/P34-final-ablation-scaling-and-scientific-analysis.md
+  P35:
+    name: Reproducible release and final acceptance
+    depends_on:
+    - P34
+    goal: Validate a clean-room build/run, publish complete cards/reports/manifests,
+      and freeze the final research release.
+    plan: docs/phase-plans/P35-reproducible-release-and-final-acceptance.md

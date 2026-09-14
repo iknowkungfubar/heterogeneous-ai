@@ -1,0 +1,5 @@
+id: audio-v1
+architecture_candidates: [cnn, small_conformer, small_transformer]
+initialization: random
+first_gate: sound_classification
+speech_recognition_after_representation_gate: true

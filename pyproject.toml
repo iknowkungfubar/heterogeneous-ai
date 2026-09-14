@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=75", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "heterogeneous-ai"
+version = "0.1.0"
+description = "Consumer-scale heterogeneous multimodal AI research platform"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "MIT"}
+authors = [{name = "Heterogeneous AI Research Platform contributors"}]
+dependencies = [
+  "pyyaml>=6",
+  "numpy>=2",
+  "pandas>=2",
+  "pyarrow>=18",
+  "transformers>=4.50",
+  "datasets>=3",
+  "tokenizers>=0.21",
+  "accelerate>=1",
+  "safetensors>=0.5",
+  "sentencepiece>=0.2",
+  "scikit-learn>=1.6",
+  "xgboost>=3",
+  "sympy>=1.13",
+  "z3-solver>=4.13",
+  "networkx>=3.4",
+  "hnswlib>=0.8",
+  "duckdb>=1.2",
+  "tensorboard>=2.18",
+  "mlflow>=3",
+  "fastapi>=0.115",
+  "uvicorn>=0.34",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8",
+  "pytest-cov>=6",
+  "ruff>=0.11",
+]
+
+[project.scripts]
+hai = "hai.cli.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
+markers = [
+  "gpu: requires a compatible GPU runtime",
+  "slow: longer-running test not executed in default unit suite",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]

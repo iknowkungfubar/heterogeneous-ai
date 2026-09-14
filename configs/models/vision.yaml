@@ -1,0 +1,6 @@
+id: vision-v1
+architecture: small_vit
+initialization: random
+parameter_target: 5M-20M
+first_gate: standalone_image_task
+multimodal_fusion_allowed_only_after_standalone_gate: true

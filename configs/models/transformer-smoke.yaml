@@ -1,0 +1,11 @@
+id: transformer-smoke-v1
+architecture: causal_decoder_transformer
+initialization: random
+vocab_size_from_tokenizer: true
+hidden_size: 128
+intermediate_size: 384
+num_hidden_layers: 2
+num_attention_heads: 4
+num_key_value_heads: 2
+context_length: 128
+tie_word_embeddings: true

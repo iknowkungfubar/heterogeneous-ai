@@ -1,0 +1,7 @@
+id: gru-sequence-v1
+architecture: gru_language_model
+initialization: random
+same_tokenizer_as_transformer: true
+embedding_size: 384
+hidden_size: 512
+num_layers: 3

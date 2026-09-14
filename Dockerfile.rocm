@@ -1,0 +1,15 @@
+ARG ROCM_IMAGE=rocm/pytorch:rocm10.0_ubuntu24.04_py3.12_pytorch_release_2.12.0
+FROM ${ROCM_IMAGE}
+
+WORKDIR /workspace
+ENV PYTHONPATH=/workspace/src
+
+# Keep the image's validated ROCm PyTorch installation. Do not pip-install a
+# generic torch package on top of it.
+RUN python -m pip install --upgrade pip setuptools wheel
+
+COPY pyproject.toml README.md requirements.in /tmp/hai-build/
+COPY src /tmp/hai-build/src
+RUN cd /tmp/hai-build && python -m pip install -e '.[dev]'
+
+CMD ["bash"]

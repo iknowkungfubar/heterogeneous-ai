@@ -1,0 +1,17 @@
+seed: 1337
+precision: fp16
+micro_batch_size: 4
+gradient_accumulation_steps: 16
+learning_rate: 0.0003
+weight_decay: 0.1
+warmup_ratio: 0.03
+scheduler: cosine
+gradient_clip_norm: 1.0
+checkpointing:
+  save_optimizer: true
+  save_scheduler: true
+  save_rng_state: true
+logging:
+  mlflow: true
+  metrics_jsonl: true
+  log_peak_vram: true

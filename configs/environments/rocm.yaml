@@ -1,0 +1,16 @@
+as_of: 2026-09-13
+hardware_reference:
+  gpu: AMD Radeon RX 7900 GRE
+  architecture: gfx1100
+  vram_gib: 16
+container:
+  image: rocm/pytorch:rocm10.0_ubuntu24.04_py3.12_pytorch_release_2.12.0
+  python: "3.12"
+  rocm: "10.0"
+  pytorch: "2.12.0"
+policy:
+  do_not_pip_replace_torch: true
+  upgrade_requires_adr_and_p01_revalidation: true
+notes:
+  - "This is a pinned starting point derived from current AMD documentation."
+  - "Validate the exact image on the target host before promotion."

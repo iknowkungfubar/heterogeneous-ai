@@ -1,0 +1,22 @@
+services:
+  hai:
+    build:
+      context: .
+      dockerfile: Dockerfile.rocm
+      args:
+        ROCM_IMAGE: ${HAI_CONTAINER_IMAGE:-rocm/pytorch:rocm10.0_ubuntu24.04_py3.12_pytorch_release_2.12.0}
+    working_dir: /workspace
+    environment:
+      PYTHONPATH: /workspace/src
+    volumes:
+      - .:/workspace
+    devices:
+      - /dev/kfd:/dev/kfd
+      - /dev/dri:/dev/dri
+    group_add:
+      - video
+    ipc: host
+    security_opt:
+      - seccomp=unconfined
+    stdin_open: true
+    tty: true

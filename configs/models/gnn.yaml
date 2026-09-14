@@ -1,0 +1,5 @@
+id: gnn-v1
+architecture: simple_message_passing
+initialization: random
+implementation_first: plain_pytorch
+promotion_requires_benefit_over_deterministic_graph_baseline: true

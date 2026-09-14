@@ -1,0 +1,255 @@
+project: heterogeneous-ai
+current_phase: P00
+status: ready
+phases:
+  P00:
+    name: Repository bootstrap
+    status: ready
+    depends_on: []
+    evidence: []
+    notes: ''
+  P01:
+    name: Host, GPU, Docker, and ROCm environment
+    status: blocked
+    depends_on:
+    - P00
+    evidence: []
+    notes: ''
+  P02:
+    name: PyTorch fundamentals and GPU training smoke tests
+    status: blocked
+    depends_on:
+    - P01
+    evidence: []
+    notes: ''
+  P03:
+    name: Data governance and dataset pipeline
+    status: blocked
+    depends_on:
+    - P02
+    evidence: []
+    notes: ''
+  P04:
+    name: Tokenizer from scratch
+    status: blocked
+    depends_on:
+    - P03
+    evidence: []
+    notes: ''
+  P05:
+    name: Tiny Transformer pipeline smoke model
+    status: blocked
+    depends_on:
+    - P04
+    evidence: []
+    notes: ''
+  P06:
+    name: Scratch-trained Transformer baseline
+    status: blocked
+    depends_on:
+    - P05
+    evidence: []
+    notes: ''
+  P07:
+    name: Independent sequence specialist
+    status: blocked
+    depends_on:
+    - P06
+    evidence: []
+    notes: ''
+  P08:
+    name: Deterministic symbolic reasoning specialist
+    status: blocked
+    depends_on:
+    - P07
+    evidence: []
+    notes: ''
+  P09:
+    name: Objective benchmark framework
+    status: blocked
+    depends_on:
+    - P08
+    evidence: []
+    notes: ''
+  P10:
+    name: Unified expert protocol and provenance
+    status: blocked
+    depends_on:
+    - P09
+    evidence: []
+    notes: ''
+  P11:
+    name: Learned task router
+    status: blocked
+    depends_on:
+    - P10
+    evidence: []
+    notes: ''
+  P12:
+    name: Verification layer
+    status: blocked
+    depends_on:
+    - P11
+    evidence: []
+    notes: ''
+  P13:
+    name: Calibration, consensus, and abstention
+    status: blocked
+    depends_on:
+    - P12
+    evidence: []
+    notes: ''
+  P14:
+    name: Core heterogeneous ablation study and M2 freeze
+    status: blocked
+    depends_on:
+    - P13
+    evidence: []
+    notes: ''
+  P15:
+    name: Scratch-trained semantic retrieval
+    status: blocked
+    depends_on:
+    - P14
+    evidence: []
+    notes: ''
+  P16:
+    name: Working, episodic, semantic, and procedural memory
+    status: blocked
+    depends_on:
+    - P15
+    evidence: []
+    notes: ''
+  P17:
+    name: Knowledge graph
+    status: blocked
+    depends_on:
+    - P16
+    evidence: []
+    notes: ''
+  P18:
+    name: Graph neural-network specialist
+    status: blocked
+    depends_on:
+    - P17
+    evidence: []
+    notes: ''
+  P19:
+    name: Mamba/state-space compatibility and specialist
+    status: blocked
+    depends_on:
+    - P18
+    evidence: []
+    notes: ''
+  P20:
+    name: Vision specialist from scratch
+    status: blocked
+    depends_on:
+    - P19
+    evidence: []
+    notes: ''
+  P21:
+    name: Image-text representation alignment
+    status: blocked
+    depends_on:
+    - P20
+    evidence: []
+    notes: ''
+  P22:
+    name: Multimodal fusion and visual reasoning
+    status: blocked
+    depends_on:
+    - P21
+    evidence: []
+    notes: ''
+  P23:
+    name: Audio specialist from scratch
+    status: blocked
+    depends_on:
+    - P22
+    evidence: []
+    notes: ''
+  P24:
+    name: Audio-text alignment and speech
+    status: blocked
+    depends_on:
+    - P23
+    evidence: []
+    notes: ''
+  P25:
+    name: Unified multimodal router and expert orchestration
+    status: blocked
+    depends_on:
+    - P24
+    evidence: []
+    notes: ''
+  P26:
+    name: World model
+    status: blocked
+    depends_on:
+    - P25
+    evidence: []
+    notes: ''
+  P27:
+    name: Planning and counterfactual reasoning
+    status: blocked
+    depends_on:
+    - P26
+    evidence: []
+    notes: ''
+  P28:
+    name: Compute-aware reinforcement learning orchestration
+    status: blocked
+    depends_on:
+    - P27
+    evidence: []
+    notes: ''
+  P29:
+    name: Continual learning and regression protection
+    status: blocked
+    depends_on:
+    - P28
+    evidence: []
+    notes: ''
+  P30:
+    name: Performance optimization and model lifecycle
+    status: blocked
+    depends_on:
+    - P29
+    evidence: []
+    notes: ''
+  P31:
+    name: Local CLI and inference service
+    status: blocked
+    depends_on:
+    - P30
+    evidence: []
+    notes: ''
+  P32:
+    name: Security, robustness, and fault isolation
+    status: blocked
+    depends_on:
+    - P31
+    evidence: []
+    notes: ''
+  P33:
+    name: Comprehensive benchmark and reliability suite
+    status: blocked
+    depends_on:
+    - P32
+    evidence: []
+    notes: ''
+  P34:
+    name: Final ablation, scaling, and scientific analysis
+    status: blocked
+    depends_on:
+    - P33
+    evidence: []
+    notes: ''
+  P35:
+    name: Reproducible release and final acceptance
+    status: blocked
+    depends_on:
+    - P34
+    evidence: []
+    notes: ''

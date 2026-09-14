@@ -1,0 +1,13 @@
+report:
+  include_sample_count: true
+  include_data_hash: true
+  include_model_hash: true
+  include_seed: true
+  include_latency: true
+  include_peak_memory: true
+  include_coverage: true
+calibration:
+  metrics: [ece, brier]
+efficiency:
+  metrics: [median_latency_ms, p95_latency_ms, experts_per_request, active_parameters]
+important_comparison_seeds: [1337, 2027, 31415]

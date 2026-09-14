@@ -1,0 +1,15 @@
+id: router-v1
+baseline_models:
+  - logistic_regression
+  - decision_tree
+  - xgboost
+features:
+  - task_type
+  - input_length
+  - contains_numbers
+  - contains_equation
+  - contains_graph_structure
+  - symbolic_applicable
+  - expert_raw_scores
+  - expert_agreement
+promotion_metric: final_task_utility_not_router_accuracy_alone

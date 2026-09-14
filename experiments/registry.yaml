@@ -1,0 +1,17 @@
+schema_version: 1
+experiments: []
+# Each entry must contain at least:
+# - id
+# - date
+# - hypothesis
+# - git_commit
+# - parent_experiment
+# - dataset + hash
+# - tokenizer hash
+# - model config
+# - training config
+# - seed
+# - status: planned|running|passed|failed|aborted|invalid|blocked
+# - metrics
+# - conclusion
+# - next_action

@@ -1,0 +1,9 @@
+id: world-model-v1
+environment: gridworld
+initialization: random
+objective: predict_next_state
+metrics:
+  - one_step_accuracy_or_error
+  - rollout_error_2
+  - rollout_error_5
+  - rollout_error_10

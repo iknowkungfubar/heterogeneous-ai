@@ -1,0 +1,5 @@
+# Application dependencies are defined in pyproject.toml.
+# IMPORTANT: do not add torch/torchvision/torchaudio here. The pinned AMD ROCm
+# container supplies a compatible PyTorch build. Replacing it with generic PyPI
+# packages can break the GPU runtime.
+-e .[dev]

@@ -1,0 +1,10 @@
+id: bpe-8192-v1
+type: bpe
+vocab_size: 8192
+train_split_only: true
+special_tokens:
+  - <pad>
+  - <unk>
+  - <bos>
+  - <eos>
+output_dir: artifacts/tokenizers/bpe-8192-v1

@@ -1,0 +1,7 @@
+id: babylm-strict-small-v1
+purpose: first constrained research language baseline
+regime: approximately 10M-word strict-small style budget
+split_seed: 1337
+source_must_be_verified_at_execution: true
+license_must_be_recorded_before_download: true
+manifest: data/manifests/babylm-strict-small.yaml

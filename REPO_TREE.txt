@@ -1,0 +1,223 @@
+- .env.example
++ .github
+  - pull_request_template.md
+  + workflows
+    - ci.yml
+- .gitignore
+- AGENTS.md
+- ARCHITECTURE.md
+- CONTRIBUTING.md
+- DATA.md
+- Dockerfile.rocm
+- EVALUATION.md
+- LICENSE
+- MASTER_RUNBOOK.md
+- Makefile
+- README.md
+- REFERENCES.md
+- REPO_TREE.txt
+- REPRODUCIBILITY.md
+- RESEARCH_PLAN.md
+- SECURITY.md
+- SHA256SUMS.txt
+- START_HERE.md
++ artifacts
+  + calibration
+    - .gitkeep
+  + checkpoints
+    - .gitkeep
+  + embeddings
+    - .gitkeep
+  + environment
+    - .gitkeep
+  + evaluations
+    - .gitkeep
+  + graphs
+    - .gitkeep
+  + plots
+    - .gitkeep
+  + reports
+    - .gitkeep
+  + tokenizers
+    - .gitkeep
+- compose.yaml
++ configs
+  + benchmarks
+    - core.yaml
+  + datasets
+    - babylm-strict-small.yaml
+    - tinystories-smoke.yaml
+  + environments
+    - rocm.yaml
+  + evaluation
+    - default.yaml
+  + experiments
+    - TFRM-0001.yaml
+  + models
+    - audio.yaml
+    - embedding.yaml
+    - gnn.yaml
+    - gru.yaml
+    - transformer-baseline.yaml
+    - transformer-smoke.yaml
+    - vision.yaml
+    - world.yaml
+  + routing
+    - default.yaml
+  + tokenizers
+    - bpe-8192.yaml
+  + training
+    - default.yaml
++ data
+  + benchmarks
+    - .gitkeep
+  + interim
+    - .gitkeep
+  + manifests
+    - .gitkeep
+  + multimodal
+    - .gitkeep
+  + processed
+    - .gitkeep
+  + raw
+    - .gitkeep
++ docs
+  - SYSTEM_CARD_TEMPLATE.md
+  + dataset-cards
+    - .gitkeep
+    - TEMPLATE.md
+  + decisions
+    - ADR-0001-containerized-rocm-runtime.md
+    - ADR-0002-gru-before-mamba.md
+    - ADR-0003-evaluation-before-multimodality.md
+  + experiment-reports
+    - .gitkeep
+    - TEMPLATE.md
+  + model-cards
+    - .gitkeep
+    - TEMPLATE.md
+  + phase-plans
+    - INDEX.md
+    - P00-repository-bootstrap.md
+    - P01-host-gpu-docker-and-rocm-environment.md
+    - P02-pytorch-fundamentals-and-gpu-training-smoke-tests.md
+    - P03-data-governance-and-dataset-pipeline.md
+    - P04-tokenizer-from-scratch.md
+    - P05-tiny-transformer-pipeline-smoke-model.md
+    - P06-scratch-trained-transformer-baseline.md
+    - P07-independent-sequence-specialist.md
+    - P08-deterministic-symbolic-reasoning-specialist.md
+    - P09-objective-benchmark-framework.md
+    - P10-unified-expert-protocol-and-provenance.md
+    - P11-learned-task-router.md
+    - P12-verification-layer.md
+    - P13-calibration-consensus-and-abstention.md
+    - P14-core-heterogeneous-ablation-study-and-m2-freeze.md
+    - P15-scratch-trained-semantic-retrieval.md
+    - P16-working-episodic-semantic-and-procedural-memory.md
+    - P17-knowledge-graph.md
+    - P18-graph-neural-network-specialist.md
+    - P19-mamba-state-space-compatibility-and-specialist.md
+    - P20-vision-specialist-from-scratch.md
+    - P21-image-text-representation-alignment.md
+    - P22-multimodal-fusion-and-visual-reasoning.md
+    - P23-audio-specialist-from-scratch.md
+    - P24-audio-text-alignment-and-speech.md
+    - P25-unified-multimodal-router-and-expert-orchestration.md
+    - P26-world-model.md
+    - P27-planning-and-counterfactual-reasoning.md
+    - P28-compute-aware-reinforcement-learning-orchestration.md
+    - P29-continual-learning-and-regression-protection.md
+    - P30-performance-optimization-and-model-lifecycle.md
+    - P31-local-cli-and-inference-service.md
+    - P32-security-robustness-and-fault-isolation.md
+    - P33-comprehensive-benchmark-and-reliability-suite.md
+    - P34-final-ablation-scaling-and-scientific-analysis.md
+    - P35-reproducible-release-and-final-acceptance.md
+  + status
+    - phase-state.yaml
+  - task-graph.yaml
++ experiments
+  - registry.yaml
+  + runs
+    - .gitkeep
+- pyproject.toml
+- requirements.in
+- requirements.lock.txt
++ scripts
+  - backup.sh
+  - bootstrap-host.sh
+  - capture-environment.sh
+  - check-phase.py
+  - enter-rocm.sh
+  - gpu-smoke.sh
+  - health-check.sh
+  - new-experiment.py
+  - verify-scaffold.py
++ src
+  + hai
+    - __init__.py
+    + audio
+      - __init__.py
+    + calibration
+      - __init__.py
+    + cli
+      - __init__.py
+      - main.py
+    + common
+      - __init__.py
+      - schema.py
+    + consensus
+      - __init__.py
+    + data
+      - __init__.py
+    + evaluation
+      - __init__.py
+    + experts
+      - __init__.py
+    + graphs
+      - __init__.py
+    + memory
+      - __init__.py
+    + models
+      - __init__.py
+    + multimodal
+      - __init__.py
+    + planning
+      - __init__.py
+    + reinforcement
+      - __init__.py
+    + reporting
+      - __init__.py
+    + retrieval
+      - __init__.py
+    + routing
+      - __init__.py
+    + serving
+      - __init__.py
+    + symbolic
+      - __init__.py
+      - algebra.py
+    + tokenization
+      - __init__.py
+    + training
+      - __init__.py
+      - linear_smoke.py
+    + verification
+      - __init__.py
+    + vision
+      - __init__.py
+    + world
+      - __init__.py
++ tests
+  + acceptance
+    - .gitkeep
+  + integration
+    - .gitkeep
+  + regression
+    - .gitkeep
+  + smoke
+    - test_gpu_linear.py
+  + unit
+    - test_schema.py
+    - test_symbolic_algebra.py

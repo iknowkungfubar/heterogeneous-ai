@@ -1,0 +1,10 @@
+# INTENTIONALLY NOT FABRICATED.
+#
+# Generate the concrete lock/freeze inside the pinned ROCm container during P01:
+#
+#   python -m pip install -e '.[dev]'
+#   python -m pip freeze --exclude-editable > requirements.lock.txt
+#
+# Commit the resulting file together with the environment evidence after P01
+# passes. Never pretend an untested host-generated lock is the canonical ROCm
+# environment.

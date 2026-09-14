@@ -1,0 +1,8 @@
+id: tinystories-smoke-v1
+purpose: engineering smoke testing only
+source: roneneldan/TinyStories
+streaming: true
+max_train_examples: 100000
+split_seed: 1337
+tokenizer_training_uses_test_data: false
+manifest: data/manifests/tinystories-smoke.yaml
