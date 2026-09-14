@@ -79,7 +79,7 @@ experiments:
 - id: P08-SYMBOLIC-20260914
   date: '2026-09-14'
   hypothesis: 'Typed deterministic symbolic adapters can solve exact starter tasks and reject unsupported formalizations safely.'
-  git_commit: PENDING_FINAL_COMMIT
+  git_commit: 20a3033
   parent_experiment: GRU-0001
   dataset: null
   dataset_hash: null
