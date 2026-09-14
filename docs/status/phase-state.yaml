@@ -1,5 +1,5 @@
 project: heterogeneous-ai
-current_phase: P17
+current_phase: P18
 status: ready
 phases:
   P00:
@@ -144,14 +144,15 @@ phases:
     notes: 'Four explicit SQLite memory types passed trust, provenance, duplicate/conflict, relationship, and retention self-tests; model output remains untrusted until evidence-backed validation.'
   P17:
     name: Knowledge graph
-    status: ready
+    status: passed
     depends_on:
     - P16
-    evidence: []
-    notes: ''
+    evidence:
+    - docs/experiment-reports/P17-knowledge-graph-2026-09-14.md
+    notes: 'Deterministic SQLite graph operations, trust-filtered traversal, provenance round trips, fixture import, duplicate idempotency, and explicit conflicts passed.'
   P18:
     name: Graph neural-network specialist
-    status: blocked
+    status: ready
     depends_on:
     - P17
     evidence: []
