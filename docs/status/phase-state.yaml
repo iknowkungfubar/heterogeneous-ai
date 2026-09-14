@@ -1,5 +1,5 @@
 project: heterogeneous-ai
-current_phase: P13
+current_phase: P14
 status: ready
 phases:
   P00:
@@ -112,14 +112,15 @@ phases:
     notes: 'Independent deterministic verification passed all 84 validation records, rejected adversarial wrong candidates, and exposes exact/rejected/abstain strength to consensus.'
   P13:
     name: Calibration, consensus, and abstention
-    status: ready
+    status: passed
     depends_on:
     - P12
-    evidence: []
-    notes: ''
+    evidence:
+    - docs/experiment-reports/P13-calibration-consensus-abstention-2026-09-14.md
+    notes: 'Validation-only calibration reported ECE/Brier for three methods; evidence-aware consensus accepted 24 independently verified outputs and abstained on 60 unsupported outputs for 100% selective accuracy.'
   P14:
     name: Core heterogeneous ablation study and M2 freeze
-    status: blocked
+    status: ready
     depends_on:
     - P13
     evidence: []

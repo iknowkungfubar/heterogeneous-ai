@@ -4,6 +4,12 @@ import argparse
 import json
 from pathlib import Path
 
+from hai.calibration.engine import (
+    CalibrationError,
+    calibrate,
+    evaluate_consensus,
+    write_report,
+)
 from hai.data.pipeline import (
     DataGovernanceError,
     fetch_dataset,
@@ -195,9 +201,78 @@ def main() -> int:
     router_route.add_argument("--config", type=Path, required=True)
     router_route.add_argument("--category", required=True)
     router_route.add_argument("--prompt", required=True)
+    calibrate_parser = sub.add_parser(
+        "calibrate", help="fit validation-only confidence calibration"
+    )
+    calibrate_parser.add_argument(
+        "--config", type=Path, default=Path("configs/benchmarks/core.yaml")
+    )
+    calibrate_parser.add_argument("--split", choices=("validation",), default="validation")
+    calibrate_parser.add_argument(
+        "--method", choices=("all", "temperature", "logistic", "isotonic"), default="all"
+    )
+    consensus = sub.add_parser("consensus", help="evaluate evidence-aware consensus")
+    consensus_sub = consensus.add_subparsers(dest="consensus_command", required=True)
+    consensus_evaluate = consensus_sub.add_parser(
+        "evaluate", help="measure coverage and abstention"
+    )
+    consensus_evaluate.add_argument(
+        "--config", type=Path, default=Path("configs/benchmarks/core.yaml")
+    )
+    consensus_evaluate.add_argument("--split", choices=("validation",), default="validation")
+    evaluation = sub.add_parser("evaluation", help="produce calibration and reliability reports")
+    evaluation_sub = evaluation.add_subparsers(dest="evaluation_command", required=True)
+    reliability = evaluation_sub.add_parser(
+        "reliability-report", help="write validation reliability metrics"
+    )
+    reliability.add_argument("--config", type=Path, default=Path("configs/benchmarks/core.yaml"))
+    reliability.add_argument("--split", choices=("validation",), default="validation")
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
+    if args.command == "calibrate":
+        try:
+            result = calibrate(args.config, Path.cwd(), args.split, args.method)
+            print(
+                json.dumps(
+                    write_report(result, Path("artifacts/calibration/calibration-v1.json")),
+                    indent=2,
+                    sort_keys=True,
+                )
+            )
+        except (CalibrationError, OSError, KeyError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
+        return 0
+    if args.command == "consensus":
+        if args.consensus_command != "evaluate":
+            return 2
+        try:
+            result = evaluate_consensus(args.config, Path.cwd(), args.split)
+            print(
+                json.dumps(
+                    write_report(result, Path("artifacts/calibration/consensus-v1.json")),
+                    indent=2,
+                    sort_keys=True,
+                )
+            )
+        except (CalibrationError, OSError, KeyError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
+        return 0
+    if args.command == "evaluation":
+        if args.evaluation_command != "reliability-report":
+            return 2
+        try:
+            result = calibrate(args.config, Path.cwd(), args.split, "all")
+            print(
+                json.dumps(
+                    write_report(result, Path("artifacts/calibration/reliability-v1.json")),
+                    indent=2,
+                    sort_keys=True,
+                )
+            )
+        except (CalibrationError, OSError, KeyError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
+        return 0
     if args.command == "data":
         try:
             if args.data_command == "inspect-config":
