@@ -26,6 +26,11 @@ from hai.models.transformer_smoke import (
     load_model_config,
     train_model,
 )
+from hai.symbolic.reasoning import (
+    SymbolicError,
+    exact_arithmetic,
+    solve_linear_equation_text,
+)
 from hai.tokenization.bpe import (
     TokenizerGovernanceError,
     inspect_tokenizer,
@@ -115,6 +120,11 @@ def main() -> int:
     compare_parser.add_argument("--transformer-checkpoint", type=Path, required=True)
     compare_parser.add_argument("--gru-checkpoint", type=Path, required=True)
     compare_parser.add_argument("--max-blocks", type=int, default=128)
+    symbolic = sub.add_parser("symbolic", help="run deterministic symbolic reasoning")
+    symbolic_sub = symbolic.add_subparsers(dest="symbolic_command", required=True)
+    solve = symbolic_sub.add_parser("solve", help="solve a safe arithmetic or linear equation")
+    solve.add_argument("expression")
+    symbolic_sub.add_parser("self-test", help="run deterministic symbolic self-tests")
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
@@ -146,6 +156,30 @@ def main() -> int:
                 return 2
             print(json.dumps(result, indent=2, sort_keys=True))
         except (TokenizerGovernanceError, OSError) as exc:
+            parser.error(str(exc))
+        return 0
+    if args.command == "symbolic":
+        try:
+            if args.symbolic_command == "solve":
+                result = (
+                    solve_linear_equation_text(args.expression)
+                    if "=" in args.expression
+                    else exact_arithmetic(args.expression)
+                )
+                print(json.dumps({"value": result.value, "trace": result.trace}, indent=2))
+            elif args.symbolic_command == "self-test":
+                cases = [
+                    exact_arithmetic("1 + 2 * 3").value == "7",
+                    solve_linear_equation_text("3*x + 4 = 19").value == "5",
+                ]
+                print(
+                    json.dumps(
+                        {"ok": all(cases), "cases_passed": sum(cases), "cases_total": len(cases)}
+                    )
+                )
+            else:
+                return 2
+        except (SymbolicError, OSError) as exc:
             parser.error(str(exc))
         return 0
     if args.command == "model":
