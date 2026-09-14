@@ -4,7 +4,13 @@ import argparse
 import json
 from pathlib import Path
 
-from hai.data.pipeline import DataGovernanceError, inspect_config
+from hai.data.pipeline import (
+    DataGovernanceError,
+    fetch_dataset,
+    inspect_config,
+    prepare_dataset,
+    verify_dataset,
+)
 
 
 def env_check() -> int:
@@ -37,12 +43,29 @@ def main() -> int:
     data_sub = data.add_subparsers(dest="data_command", required=True)
     inspect = data_sub.add_parser("inspect-config", help="validate a dataset config")
     inspect.add_argument("--config", type=Path, required=True)
+    for command, help_text in (
+        ("fetch", "acquire the allowlisted dataset into immutable raw JSONL"),
+        ("prepare", "create deterministic processed splits"),
+        ("verify", "verify manifest, checksums, and split disjointness"),
+    ):
+        action = data_sub.add_parser(command, help=help_text)
+        action.add_argument("--config", type=Path, required=True)
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
-    if args.command == "data" and args.data_command == "inspect-config":
+    if args.command == "data":
         try:
-            print(json.dumps(inspect_config(args.config), indent=2, sort_keys=True))
+            if args.data_command == "inspect-config":
+                result = inspect_config(args.config)
+            elif args.data_command == "fetch":
+                result = fetch_dataset(args.config, Path.cwd())
+            elif args.data_command == "prepare":
+                result = prepare_dataset(args.config, Path.cwd())
+            elif args.data_command == "verify":
+                result = verify_dataset(args.config, Path.cwd())
+            else:
+                return 2
+            print(json.dumps(result, indent=2, sort_keys=True))
         except (DataGovernanceError, OSError) as exc:
             parser.error(str(exc))
         return 0

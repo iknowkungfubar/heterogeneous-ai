@@ -1,5 +1,5 @@
 project: heterogeneous-ai
-current_phase: P03
+current_phase: P04
 status: ready
 phases:
   P00:
@@ -29,15 +29,16 @@ phases:
     notes: 'GPU fundamentals, convergence, peak memory, and checkpoint round-trip passed in the validated ROCm Compose image.'
   P03:
     name: Data governance and dataset pipeline
-    status: ready
+    status: passed
     depends_on:
     - P02
     evidence:
     - docs/experiment-reports/P03-data-governance-implementation-2026-09-14.md
-    notes: 'Local governance tooling and tests pass; external dataset acquisition and canonical checksum manifests remain pending approval.'
+    - docs/experiment-reports/P03-data-governance-complete-2026-09-14.md
+    notes: 'TinyStories smoke data was acquired through the allowlisted Parquet path, normalized into read-only raw JSONL, deterministically split, checksummed, and verified; upstream immutable revision pinning remains a release follow-up.'
   P04:
     name: Tokenizer from scratch
-    status: blocked
+    status: ready
     depends_on:
     - P03
     evidence: []
