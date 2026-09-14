@@ -121,7 +121,7 @@ experiments:
 - id: P10-PROTOCOL-20260914
   date: '2026-09-14'
   hypothesis: 'All core experts emit one versioned result/evidence/provenance contract.'
-  git_commit: PENDING_FINAL_COMMIT
+  git_commit: 9c9876e
   parent_experiment: P09-BENCHMARK-20260914
   dataset: null
   dataset_hash: null
