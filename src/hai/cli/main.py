@@ -33,6 +33,13 @@ from hai.models.transformer_smoke import (
     load_model_config,
     train_model,
 )
+from hai.routing.router import (
+    RouterError,
+    build_router_dataset,
+    evaluate_router,
+    route_prompt,
+    train_router,
+)
 from hai.symbolic.reasoning import (
     SymbolicError,
     exact_arithmetic,
@@ -66,6 +73,17 @@ def env_check() -> int:
             result["devices"].append({"index": idx, "name": torch.cuda.get_device_name(idx)})
     print(json.dumps(result, indent=2))
     return 0 if result["ok"] else 1
+
+
+def _benchmark_config_path(value: str) -> Path:
+    direct = Path(value)
+    if direct.is_file():
+        return direct
+    aliases = {"core-objective-v1": Path("configs/benchmarks/core.yaml")}
+    try:
+        return aliases[value]
+    except KeyError as exc:
+        raise OSError(f"unknown benchmark config: {value}") from exc
 
 
 def main() -> int:
@@ -152,6 +170,24 @@ def main() -> int:
     expert_sub = expert.add_subparsers(dest="expert_command", required=True)
     expert_self_test = expert_sub.add_parser("self-test", help="verify all core expert adapters")
     expert_self_test.add_argument("--all", action="store_true")
+    router = sub.add_parser("router", help="train and evaluate the task router")
+    router_sub = router.add_subparsers(dest="router_command", required=True)
+    router_dataset = router_sub.add_parser("build-dataset", help="build TRAIN-only router metadata")
+    router_dataset.add_argument("--benchmark", required=True)
+    router_train = router_sub.add_parser("train", help="train the interpretable router")
+    router_train.add_argument("--config", type=Path, required=True)
+    router_train.add_argument("--benchmark", required=True)
+    router_train.add_argument("--split", choices=("train",), default="train")
+    router_evaluate = router_sub.add_parser(
+        "evaluate", help="evaluate router utility and expert cost"
+    )
+    router_evaluate.add_argument("--config", type=Path, required=True)
+    router_evaluate.add_argument("--benchmark", required=True)
+    router_evaluate.add_argument("--split", choices=("validation", "test"), default="validation")
+    router_route = router_sub.add_parser("route", help="route one task with a decision trace")
+    router_route.add_argument("--config", type=Path, required=True)
+    router_route.add_argument("--category", required=True)
+    router_route.add_argument("--prompt", required=True)
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
@@ -247,6 +283,27 @@ def main() -> int:
                 indent=2,
             )
         )
+        return 0
+    if args.command == "router":
+        try:
+            benchmark_config = (
+                _benchmark_config_path(args.benchmark)
+                if args.router_command != "route"
+                else None
+            )
+            if args.router_command == "build-dataset":
+                result = build_router_dataset(benchmark_config, Path.cwd())
+            elif args.router_command == "train":
+                result = train_router(args.config, benchmark_config, Path.cwd(), args.split)
+            elif args.router_command == "evaluate":
+                result = evaluate_router(args.config, benchmark_config, Path.cwd(), args.split)
+            elif args.router_command == "route":
+                result = route_prompt(args.config, args.prompt, args.category, Path.cwd())
+            else:
+                return 2
+            print(json.dumps(result, indent=2, sort_keys=True))
+        except (RouterError, OSError, KeyError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
         return 0
     if args.command == "model":
         try:
