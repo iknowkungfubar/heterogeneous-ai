@@ -22,6 +22,7 @@ data/multimodal/**
 artifacts/checkpoints/**
 artifacts/embeddings/**
 artifacts/graphs/**
+artifacts/environment/**
 !artifacts/**/.gitkeep
 *.pt
 *.pth

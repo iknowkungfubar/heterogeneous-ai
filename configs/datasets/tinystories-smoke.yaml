@@ -1,6 +1,9 @@
 id: tinystories-smoke-v1
 purpose: engineering smoke testing only
 source: roneneldan/TinyStories
+license: CDLA-Sharing-1.0
+license_source: https://huggingface.co/datasets/roneneldan/TinyStories
+source_revision: main
 streaming: true
 max_train_examples: 100000
 split_seed: 1337
