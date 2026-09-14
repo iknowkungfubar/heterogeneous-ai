@@ -11,6 +11,12 @@ from hai.data.pipeline import (
     prepare_dataset,
     verify_dataset,
 )
+from hai.tokenization.bpe import (
+    TokenizerGovernanceError,
+    inspect_tokenizer,
+    train_tokenizer,
+    verify_tokenizer,
+)
 
 
 def env_check() -> int:
@@ -50,6 +56,18 @@ def main() -> int:
     ):
         action = data_sub.add_parser(command, help=help_text)
         action.add_argument("--config", type=Path, required=True)
+    tokenizer = sub.add_parser("tokenizer", help="train and verify project-owned tokenizers")
+    tokenizer_sub = tokenizer.add_subparsers(dest="tokenizer_command", required=True)
+    train = tokenizer_sub.add_parser("train", help="train a BPE tokenizer from TRAIN only")
+    train.add_argument("--config", type=Path, required=True)
+    train.add_argument("--dataset-manifest", type=Path, required=True)
+    inspect_tokenizer_parser = tokenizer_sub.add_parser("inspect", help="inspect encoded text")
+    inspect_tokenizer_parser.add_argument("--tokenizer", type=Path, required=True)
+    inspect_tokenizer_parser.add_argument("--text", required=True)
+    verify_tokenizer_parser = tokenizer_sub.add_parser(
+        "verify", help="verify tokenizer provenance and reload"
+    )
+    verify_tokenizer_parser.add_argument("--tokenizer", type=Path, required=True)
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
@@ -67,6 +85,20 @@ def main() -> int:
                 return 2
             print(json.dumps(result, indent=2, sort_keys=True))
         except (DataGovernanceError, OSError) as exc:
+            parser.error(str(exc))
+        return 0
+    if args.command == "tokenizer":
+        try:
+            if args.tokenizer_command == "train":
+                result = train_tokenizer(args.config, args.dataset_manifest, Path.cwd())
+            elif args.tokenizer_command == "inspect":
+                result = inspect_tokenizer(args.tokenizer, args.text)
+            elif args.tokenizer_command == "verify":
+                result = verify_tokenizer(args.tokenizer, Path.cwd())
+            else:
+                return 2
+            print(json.dumps(result, indent=2, sort_keys=True))
+        except (TokenizerGovernanceError, OSError) as exc:
             parser.error(str(exc))
         return 0
     return 2
