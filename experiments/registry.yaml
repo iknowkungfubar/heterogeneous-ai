@@ -210,3 +210,29 @@ experiments:
     incorrect_accepted: 0
   conclusion: 'Calibration metrics, verified-evidence consensus, abstention, and accuracy-versus-coverage reporting passed on VALIDATION only; coverage remains limited by the current specialist pool.'
   next_action: 'Advance to P14 core heterogeneous ablation and M2 freeze after GitHub merge and synchronization.'
+- id: P14-CORE-M2-20260914
+  date: '2026-09-14'
+  hypothesis: 'The frozen heterogeneous core improves structured TEST utility over the Transformer baseline without unnecessary expert calls.'
+  git_commit: 9c325f3
+  parent_experiment: P13-CALIBRATION-20260914
+  dataset: data/manifests/core-objective-v1.yaml
+  dataset_hash: 1cdfbf16d8ac3efd278023931053ab34519bd634e58b74a5c1b7a78c26cb2bb
+  tokenizer_hash: null
+  model_config: src/hai/evaluation/ablation.py
+  training_config: configs/ablation/core-m2.yaml
+  seed: 1337
+  status: passed-negative-result
+  metrics:
+    test_samples: 84
+    symbolic_only_task_accuracy: 0.2857142857
+    heterogeneous_core_task_accuracy: 0.2857142857
+    heterogeneous_core_coverage: 0.2857142857
+    heterogeneous_core_selective_accuracy: 1.0
+    all_experts_calls_per_request: 3
+    symbolic_calls_per_request: 1
+    bootstrap_seeds: 3
+    bootstrap_iterations_per_seed: 1000
+    bootstrap_task_accuracy_95ci: [0.1904761905, 0.380952381]
+    learned_baselines_structured_status: not_applicable
+  conclusion: 'M2 is a negative freeze for current structured-core value: extra experts add cost without measured gain, and learned baselines cannot be fairly scored until structured-output adapters exist.'
+  next_action: 'Advance to P15 scratch-trained semantic retrieval after GitHub merge and synchronization.'

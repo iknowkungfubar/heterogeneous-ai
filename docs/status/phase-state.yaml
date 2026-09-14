@@ -1,5 +1,5 @@
 project: heterogeneous-ai
-current_phase: P14
+current_phase: P15
 status: ready
 phases:
   P00:
@@ -120,14 +120,15 @@ phases:
     notes: 'Validation-only calibration reported ECE/Brier for three methods; evidence-aware consensus accepted 24 independently verified outputs and abstained on 60 unsupported outputs for 100% selective accuracy.'
   P14:
     name: Core heterogeneous ablation study and M2 freeze
-    status: ready
+    status: passed
     depends_on:
     - P13
-    evidence: []
-    notes: ''
+    evidence:
+    - docs/experiment-reports/P14-core-heterogeneous-ablation-m2-2026-09-14.md
+    notes: 'Frozen TEST ablation completed with bootstrap intervals; heterogeneous-core matched symbolic-only at 28.57% task accuracy and 28.57% coverage, all-experts tripled calls without improvement, and learned baselines were explicitly not applicable.'
   P15:
     name: Scratch-trained semantic retrieval
-    status: blocked
+    status: ready
     depends_on:
     - P14
     evidence: []
