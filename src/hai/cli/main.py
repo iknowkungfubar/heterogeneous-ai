@@ -27,6 +27,8 @@ from hai.evaluation.benchmark import (
     verify_benchmark,
 )
 from hai.experts.protocol import core_experts
+from hai.memory.store import MemoryError, MemoryStore
+from hai.memory.store import self_test as memory_self_test
 from hai.models.gru import (
     GRUGovernanceError,
     GRULanguageModel,
@@ -264,9 +266,45 @@ def main() -> int:
         "--config", type=Path, default=Path("configs/models/embedding.yaml")
     )
     retrieval_evaluate.add_argument("--split", choices=("validation",), default="validation")
+    memory = sub.add_parser("memory", help="manage explicit memory stores")
+    memory_sub = memory.add_subparsers(dest="memory_command", required=True)
+    memory_init = memory_sub.add_parser("init", help="initialize the memory database")
+    memory_init.add_argument("--db", type=Path, default=Path("artifacts/memory/memory.sqlite"))
+    memory_sub.add_parser("self-test", help="exercise memory trust and retention controls")
+    memory_inspect = memory_sub.add_parser("inspect", help="inspect non-deleted memory items")
+    memory_inspect.add_argument(
+        "--type", choices=("working", "episodic", "semantic", "procedural")
+    )
+    memory_inspect.add_argument("--db", type=Path, default=Path("artifacts/memory/memory.sqlite"))
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
+    if args.command == "memory":
+        try:
+            if args.memory_command == "init":
+                store = MemoryStore(args.db)
+                store.close()
+                result = {"ok": True, "path": str(args.db)}
+            elif args.memory_command == "self-test":
+                result = memory_self_test()
+            elif args.memory_command == "inspect":
+                store = MemoryStore(args.db)
+                try:
+                    items = store.inspect(args.type)
+                    result = {"items": items, "count": len(items)}
+                finally:
+                    store.close()
+            else:
+                return 2
+            result["tracking"] = log_cli_run(
+                f"memory-{args.memory_command}",
+                result,
+                tags={"phase": "P16", "command": f"memory-{args.memory_command}"},
+            )
+            print(json.dumps(result, indent=2, sort_keys=True))
+        except (MemoryError, OSError, KeyError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
+        return 0
     if args.command == "retrieval":
         try:
             if args.retrieval_command == "train-encoder":

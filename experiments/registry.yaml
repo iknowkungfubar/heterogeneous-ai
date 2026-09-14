@@ -263,3 +263,26 @@ experiments:
     provenance_fields: 5
   conclusion: 'Scratch dense retrieval beats random, and hybrid lexical+dense retrieval beats lexical alone on VALIDATION; dense alone remains below lexical and is retained as a component rather than a replacement.'
   next_action: 'Advance to P16 explicit memory stores after GitHub merge and synchronization.'
+- id: P16-MEMORY-20260914
+  date: '2026-09-14'
+  hypothesis: 'Explicit memory stores can preserve provenance while enforcing validation, conflict, duplicate, and retention controls.'
+  git_commit: PENDING_FINAL_COMMIT
+  parent_experiment: P15-RETRIEVAL-20260914
+  dataset: null
+  dataset_hash: null
+  tokenizer_hash: null
+  model_config: src/hai/memory/store.py
+  training_config: null
+  seed: null
+  status: passed
+  metrics:
+    memory_types: 4
+    untrusted_model_candidate: true
+    verified_with_evidence: true
+    duplicate_status: duplicate
+    conflict_status: conflict
+    expired_tombstones: 1
+    relationship_links: true
+    provenance_round_trip: true
+  conclusion: 'Working, episodic, semantic, and procedural SQLite stores enforce candidate-first trust, evidence-backed validation, conflict visibility, duplicate suppression, tombstone retention, and provenance round trips.'
+  next_action: 'Advance to P17 provenance-aware knowledge graph after GitHub merge and synchronization.'
