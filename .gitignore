@@ -20,6 +20,7 @@ data/multimodal/**
 
 # Large/generated artifacts
 artifacts/checkpoints/**
+artifacts/tokenizers/**
 artifacts/embeddings/**
 artifacts/graphs/**
 artifacts/environment/**

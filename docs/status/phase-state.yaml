@@ -1,5 +1,5 @@
 project: heterogeneous-ai
-current_phase: P04
+current_phase: P05
 status: ready
 phases:
   P00:
@@ -38,14 +38,15 @@ phases:
     notes: 'TinyStories smoke data was acquired through the allowlisted Parquet path, normalized into read-only raw JSONL, deterministically split, checksummed, and verified; upstream immutable revision pinning remains a release follow-up.'
   P04:
     name: Tokenizer from scratch
-    status: ready
+    status: passed
     depends_on:
     - P03
-    evidence: []
-    notes: ''
+    evidence:
+    - docs/experiment-reports/P04-tokenizer-from-scratch-2026-09-14.md
+    notes: 'Project-owned BPE tokenizer trained from TRAIN only; artifact provenance, exact edge-case round trips, vocabulary statistics, and source hashes verified.'
   P05:
     name: Tiny Transformer pipeline smoke model
-    status: blocked
+    status: ready
     depends_on:
     - P04
     evidence: []
