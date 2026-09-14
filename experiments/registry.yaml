@@ -289,7 +289,7 @@ experiments:
 - id: P17-KNOWLEDGE-GRAPH-20260914
   date: '2026-09-14'
   hypothesis: 'A deterministic SQLite graph can expose provenance-aware trusted traversal while retaining contradictory and untrusted edges explicitly.'
-  git_commit: d48aa7c
+  git_commit: 0080065
   parent_experiment: P16-MEMORY-20260914
   dataset: tests/fixtures/graph.jsonl
   dataset_hash: null
