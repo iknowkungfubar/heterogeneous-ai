@@ -187,7 +187,7 @@ experiments:
 - id: P13-CALIBRATION-20260914
   date: '2026-09-14'
   hypothesis: 'Validation-only calibration and evidence-aware consensus can report reliable confidence and abstain on unsupported outputs with explicit coverage.'
-  git_commit: PENDING_FINAL_COMMIT
+  git_commit: e066388
   parent_experiment: P12-VERIFICATION-20260914
   dataset: data/manifests/core-objective-v1.yaml
   dataset_hash: 1cdfbf16d8ac3efd278023931053ab34519bd634e58b74a5c1b7a78c26cb2bb
