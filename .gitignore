@@ -31,6 +31,7 @@ artifacts/retrieval/**
 artifacts/gnn/**
 artifacts/ssm/**
 artifacts/vision/**
+artifacts/multimodal/**
 artifacts/environment/**
 artifacts/mlflow/**
 !artifacts/**/.gitkeep

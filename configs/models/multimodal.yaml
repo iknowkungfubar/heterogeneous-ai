@@ -1,0 +1,12 @@
+id: image-text-v1
+architecture: scratch_image_text_projectors
+initialization: random
+seed: 1337
+samples: 480
+encoder_dim: 32
+shared_dim: 32
+patch_size: 4
+training_steps: 80
+batch_size: 64
+learning_rate: 0.003
+output_dir: artifacts/multimodal/image-text-v1

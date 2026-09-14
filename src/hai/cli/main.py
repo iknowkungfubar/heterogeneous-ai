@@ -44,6 +44,12 @@ from hai.models.gru import (
     evaluate_gru,
     train_gru,
 )
+from hai.models.multimodal import (
+    MultimodalError,
+    evaluate_alignment,
+    train_alignment,
+)
+from hai.models.multimodal import data_verify as multimodal_data_verify
 from hai.models.state_space import (
     StateSpaceError,
     benchmark_against_gru,
@@ -359,6 +365,31 @@ def main() -> int:
     vision_evaluate = vision_sub.add_parser("evaluate", help="evaluate vision on held-out images")
     vision_evaluate.add_argument("--config", type=Path, default=Path("configs/models/vision.yaml"))
     vision_evaluate.add_argument("--split", choices=("validation", "test"), default="validation")
+    multimodal = sub.add_parser(
+        "multimodal", help="align scratch image and text representations"
+    )
+    multimodal_sub = multimodal.add_subparsers(dest="multimodal_command", required=True)
+    alignment_train = multimodal_sub.add_parser(
+        "train-image-text-alignment", help="train paired image/text encoders"
+    )
+    alignment_train.add_argument(
+        "--config", type=Path, default=Path("configs/models/multimodal.yaml")
+    )
+    alignment_data = multimodal_sub.add_parser(
+        "data-verify", help="verify paired image/text provenance"
+    )
+    alignment_data.add_argument(
+        "--config", type=Path, default=Path("configs/models/multimodal.yaml")
+    )
+    alignment_evaluate = multimodal_sub.add_parser(
+        "evaluate-retrieval", help="evaluate bidirectional image/text retrieval"
+    )
+    alignment_evaluate.add_argument(
+        "--config", type=Path, default=Path("configs/models/multimodal.yaml")
+    )
+    alignment_evaluate.add_argument(
+        "--directions", default="image-to-text,text-to-image"
+    )
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
@@ -517,6 +548,26 @@ def main() -> int:
             )
             print(json.dumps(result, indent=2, sort_keys=True))
         except (VisionError, OSError, KeyError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
+        return 0
+    if args.command == "multimodal":
+        try:
+            if args.multimodal_command == "train-image-text-alignment":
+                result = train_alignment(args.config, Path.cwd())
+            elif args.multimodal_command == "data-verify":
+                result = multimodal_data_verify(args.config)
+            elif args.multimodal_command == "evaluate-retrieval":
+                result = evaluate_alignment(args.config, Path.cwd(), args.directions)
+            else:
+                return 2
+            result["tracking"] = log_cli_run(
+                f"multimodal-{args.multimodal_command}",
+                result,
+                tags={"phase": "P21", "command": f"multimodal-{args.multimodal_command}"},
+                params={"directions": getattr(args, "directions", "none")},
+            )
+            print(json.dumps(result, indent=2, sort_keys=True))
+        except (MultimodalError, OSError, KeyError, json.JSONDecodeError) as exc:
             parser.error(str(exc))
         return 0
     if args.command == "retrieval":
