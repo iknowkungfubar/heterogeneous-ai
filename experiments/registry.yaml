@@ -184,3 +184,29 @@ experiments:
     z3_linear_substitution: true
   conclusion: 'The verification layer independently checks all current structured validation records, rejects adversarial candidates, and fail-closed consensus on unverified or conflicting outputs.'
   next_action: 'Advance to P13 calibration, consensus, and abstention after GitHub merge and synchronization.'
+- id: P13-CALIBRATION-20260914
+  date: '2026-09-14'
+  hypothesis: 'Validation-only calibration and evidence-aware consensus can report reliable confidence and abstain on unsupported outputs with explicit coverage.'
+  git_commit: e066388
+  parent_experiment: P12-VERIFICATION-20260914
+  dataset: data/manifests/core-objective-v1.yaml
+  dataset_hash: 1cdfbf16d8ac3efd278023931053ab34519bd634e58b74a5c1b7a78c26cb2bb
+  tokenizer_hash: null
+  model_config: src/hai/calibration/engine.py
+  training_config: configs/evaluation/default.yaml
+  seed: null
+  status: passed
+  metrics:
+    validation_samples: 84
+    positive_labels: 24
+    raw_ece: 0.0
+    raw_brier: 0.0
+    logistic_ece: 0.1016818985
+    logistic_brier: 0.011040014
+    consensus_accepted: 24
+    consensus_abstained: 60
+    coverage: 0.2857142857
+    selective_accuracy: 1.0
+    incorrect_accepted: 0
+  conclusion: 'Calibration metrics, verified-evidence consensus, abstention, and accuracy-versus-coverage reporting passed on VALIDATION only; coverage remains limited by the current specialist pool.'
+  next_action: 'Advance to P14 core heterogeneous ablation and M2 freeze after GitHub merge and synchronization.'
