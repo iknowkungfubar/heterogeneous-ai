@@ -1,20 +1,22 @@
 project: heterogeneous-ai
-current_phase: P00
+current_phase: P01
 status: ready
 phases:
   P00:
     name: Repository bootstrap
-    status: ready
+    status: passed
     depends_on: []
-    evidence: []
-    notes: ''
+    evidence:
+    - docs/experiment-reports/P00-repository-bootstrap-2026-09-13.md
+    notes: 'Bootstrap checks passed; no host, GPU, data, or model changes performed.'
   P01:
     name: Host, GPU, Docker, and ROCm environment
-    status: blocked
+    status: ready
     depends_on:
     - P00
-    evidence: []
-    notes: ''
+    evidence:
+    - docs/experiment-reports/P01-host-preflight-2026-09-13.md
+    notes: 'Host preflight passed; ROCm image pull/container validation pending human approval.'
   P02:
     name: PyTorch fundamentals and GPU training smoke tests
     status: blocked
