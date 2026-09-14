@@ -266,7 +266,7 @@ experiments:
 - id: P16-MEMORY-20260914
   date: '2026-09-14'
   hypothesis: 'Explicit memory stores can preserve provenance while enforcing validation, conflict, duplicate, and retention controls.'
-  git_commit: PENDING_FINAL_COMMIT
+  git_commit: 9130e82
   parent_experiment: P15-RETRIEVAL-20260914
   dataset: null
   dataset_hash: null
