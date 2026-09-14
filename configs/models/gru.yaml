@@ -5,3 +5,9 @@ same_tokenizer_as_transformer: true
 embedding_size: 384
 hidden_size: 512
 num_layers: 3
+context_length: 512
+seed: 1337
+micro_batch_size: 4
+learning_rate: 0.0003
+weight_decay: 0.1
+gradient_clip_norm: 1.0

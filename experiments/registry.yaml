@@ -47,3 +47,32 @@ experiments:
     checkpoint_sha256: f0a245bf2e63da308b25b1108dd6e90259a37315c4cdf51f7e010f1e036fca03
   conclusion: 'Smoke-scale 25.5M parameter scratch Transformer trained on governed TinyStories data; held-out validation and generation passed.'
   next_action: 'Advance to P07 after GitHub merge and synchronization.'
+- id: GRU-0001
+  date: '2026-09-14'
+  hypothesis: 'A structurally different GRU produces complementary next-token errors relative to TFRM-0001.'
+  git_commit: PENDING_FINAL_COMMIT
+  parent_experiment: TFRM-0001
+  dataset: data/manifests/tinystories-smoke.yaml
+  dataset_hash: 5ea77ac3c9fadc57e1db0c82fbb6709bef209dd9213eb8fe9423c13cca96ac1c
+  tokenizer_hash: 5186f3747fbd6f944ad4e62b09a624c6f2019734260057e348dcdf096da9d4d2
+  model_config: configs/models/gru.yaml
+  training_config: configs/experiments/TFRM-0001.yaml
+  seed: 1337
+  status: passed
+  metrics:
+    parameter_count: 11879424
+    steps: 100
+    start_loss: 9.010451316833496
+    final_loss: 5.95500373840332
+    validation_loss: 6.0092668533325195
+    validation_perplexity: 407.1846923828125
+    checkpoint_sha256: 1ff7c9166c171776eaa3370607d3316feea5ffb9e667f594205b8551fb8839eb
+    comparison_blocks: 64
+    comparison_tokens: 32768
+    both_correct: 439
+    transformer_only: 4828
+    gru_only: 1948
+    both_wrong: 25553
+    complementarity_rate: 0.206787109375
+  conclusion: 'The GRU trained successfully and showed measurable token-level error complementarity, while both models remained wrong on most short-run predictions.'
+  next_action: 'Advance to P08 after GitHub merge and synchronization.'
