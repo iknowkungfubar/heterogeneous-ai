@@ -50,7 +50,7 @@ experiments:
 - id: GRU-0001
   date: '2026-09-14'
   hypothesis: 'A structurally different GRU produces complementary next-token errors relative to TFRM-0001.'
-  git_commit: PENDING_FINAL_COMMIT
+  git_commit: 4b27cb9
   parent_experiment: TFRM-0001
   dataset: data/manifests/tinystories-smoke.yaml
   dataset_hash: 5ea77ac3c9fadc57e1db0c82fbb6709bef209dd9213eb8fe9423c13cca96ac1c
