@@ -4,3 +4,15 @@ initialization: random
 embedding_dim: 256
 objective: contrastive
 promotion_metrics: [recall_at_1, recall_at_5, recall_at_10, mrr]
+seed: 1337
+train_records: 512
+training_steps: 100
+batch_size: 32
+vocab_size: 4096
+max_tokens: 64
+query_tokens: 8
+learning_rate: 0.01
+temperature: 0.1
+output_dir: artifacts/retrieval/dual-encoder-v1
+index_split: validation
+evaluation_records: 256

@@ -42,6 +42,12 @@ from hai.models.transformer_smoke import (
     load_model_config,
     train_model,
 )
+from hai.retrieval.engine import (
+    RetrievalError,
+    build_index,
+    evaluate_retrieval,
+    train_encoder,
+)
 from hai.routing.router import (
     RouterError,
     build_router_dataset,
@@ -238,9 +244,49 @@ def main() -> int:
     report_sub = report.add_subparsers(dest="report_command", required=True)
     milestone = report_sub.add_parser("milestone", help="show an ablation milestone report")
     milestone.add_argument("name", choices=("M2",))
+    retrieval = sub.add_parser("retrieval", help="train and evaluate semantic retrieval")
+    retrieval_sub = retrieval.add_subparsers(dest="retrieval_command", required=True)
+    retrieval_train = retrieval_sub.add_parser(
+        "train-encoder", help="train a random-initialized dual encoder on TRAIN"
+    )
+    retrieval_train.add_argument(
+        "--config", type=Path, default=Path("configs/models/embedding.yaml")
+    )
+    retrieval_index = retrieval_sub.add_parser("build-index", help="build the HNSW index")
+    retrieval_index.add_argument(
+        "--config", type=Path, default=Path("configs/models/embedding.yaml")
+    )
+    retrieval_index.add_argument("--split", choices=("validation",), default=None)
+    retrieval_evaluate = retrieval_sub.add_parser(
+        "evaluate", help="compare random, lexical, dense, and hybrid retrieval"
+    )
+    retrieval_evaluate.add_argument(
+        "--config", type=Path, default=Path("configs/models/embedding.yaml")
+    )
+    retrieval_evaluate.add_argument("--split", choices=("validation",), default="validation")
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
+    if args.command == "retrieval":
+        try:
+            if args.retrieval_command == "train-encoder":
+                result = train_encoder(args.config, Path.cwd())
+            elif args.retrieval_command == "build-index":
+                result = build_index(args.config, Path.cwd(), args.split)
+            elif args.retrieval_command == "evaluate":
+                result = evaluate_retrieval(args.config, Path.cwd(), args.split)
+            else:
+                return 2
+            result["tracking"] = log_cli_run(
+                f"retrieval-{args.retrieval_command}",
+                result,
+                tags={"phase": "P15", "command": f"retrieval-{args.retrieval_command}"},
+                params={"split": getattr(args, "split", "none")},
+            )
+            print(json.dumps(result, indent=2, sort_keys=True))
+        except (RetrievalError, OSError, KeyError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
+        return 0
     if args.command == "ablation":
         if args.ablation_command != "run":
             return 2
