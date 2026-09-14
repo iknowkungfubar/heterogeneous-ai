@@ -26,7 +26,7 @@ experiments:
 - id: TFRM-0001
   date: '2026-09-14'
   hypothesis: 'The scratch Transformer pipeline can train stably on the governed smoke dataset and produce a reproducible held-out baseline.'
-  git_commit: PENDING_FINAL_COMMIT
+  git_commit: 911c6b5
   parent_experiment: P05-gpu-30
   dataset: data/manifests/tinystories-smoke.yaml
   dataset_hash: 5ea77ac3c9fadc57e1db0c82fbb6709bef209dd9213eb8fe9423c13cca96ac1c
