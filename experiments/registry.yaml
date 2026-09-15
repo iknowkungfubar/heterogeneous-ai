@@ -483,7 +483,7 @@ experiments:
 - id: P24-AUDIO-TEXT-20260914
   date: '2026-09-14'
   hypothesis: 'Scratch audio/text encoders align measurably and a scratch ASR head reports held-out WER on source-safe paired data.'
-  git_commit: PENDING_FINAL_COMMIT
+  git_commit: 2aeb476
   parent_experiment: P23-AUDIO-20260914
   dataset: docs/dataset-cards/procedural-tones-speech-pairs-v1.md
   dataset_hash: 8b001c853f6379767f359bb6dc71eea07419723320930abede39dd82036a8edd
