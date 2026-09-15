@@ -3,3 +3,16 @@ architecture_candidates: [cnn, small_conformer, small_transformer]
 initialization: random
 first_gate: sound_classification
 speech_recognition_after_representation_gate: true
+seed: 1337
+samples: 480
+sample_length: 512
+sample_rate: 8000
+classes: 4
+base_frequencies: [220.0, 440.0, 660.0, 880.0]
+noise_level: 0.04
+training_steps: 80
+batch_size: 64
+learning_rate: 0.003
+train_fraction: 0.6
+validation_fraction: 0.2
+output_dir: artifacts/audio/audio-v1

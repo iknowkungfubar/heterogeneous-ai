@@ -1,5 +1,5 @@
 project: heterogeneous-ai
-current_phase: P23
+current_phase: P24
 status: ready
 phases:
   P00:
@@ -192,14 +192,15 @@ phases:
     notes: 'Projection and cross-attention fusion both exceeded unimodal/random visual reasoning baselines; projection was retained because cross-attention added no validation accuracy.'
   P23:
     name: Audio specialist from scratch
-    status: ready
+    status: passed
     depends_on:
     - P22
-    evidence: []
-    notes: ''
+    evidence:
+    - docs/experiment-reports/P23-audio-specialist-2026-09-14.md
+    notes: 'Procedural waveform data verification, scratch CNN training, held-out validation, and hash-bound checkpoint evaluation passed against majority/random baselines.'
   P24:
     name: Audio-text alignment and speech
-    status: blocked
+    status: ready
     depends_on:
     - P23
     evidence: []

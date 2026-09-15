@@ -32,6 +32,7 @@ artifacts/gnn/**
 artifacts/ssm/**
 artifacts/vision/**
 artifacts/multimodal/**
+artifacts/audio/**
 artifacts/environment/**
 artifacts/mlflow/**
 !artifacts/**/.gitkeep

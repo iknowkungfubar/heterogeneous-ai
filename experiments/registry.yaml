@@ -454,3 +454,29 @@ experiments:
     unit_tests_passed: 41
   conclusion: 'Both fusion variants beat unimodal/random visual reasoning baselines; projection is retained because cross-attention adds no accuracy.'
   next_action: 'Advance to P23 audio specialist from scratch after GitHub merge and synchronization.'
+- id: P23-AUDIO-20260914
+  date: '2026-09-14'
+  hypothesis: 'A scratch waveform CNN learns standalone sound classification and beats majority/random baselines on held-out waveforms.'
+  git_commit: PENDING_FINAL_COMMIT
+  parent_experiment: P22-VISUAL-OBJECTIVE-20260914
+  dataset: docs/dataset-cards/procedural-tones-v1.md
+  dataset_hash: 738e9da21cce61647c8f7e7ab7e1f85d1e553363732ed415131a5e815dff7863
+  tokenizer_hash: null
+  model_config: configs/models/audio.yaml
+  training_config: configs/models/audio.yaml
+  seed: 1337
+  status: passed
+  metrics:
+    train_samples: 288
+    validation_samples: 96
+    test_samples: 96
+    parameter_count: 3908
+    training_steps: 80
+    validation_loss: 0.0135713471
+    validation_accuracy: 1.0
+    majority_baseline_accuracy: 0.2604166567
+    random_baseline_accuracy: 0.1770833284
+    external_download: false
+    unit_tests_passed: 43
+  conclusion: 'The random-initialized waveform CNN learned procedural four-class audio with 1.0 VALIDATION accuracy, well above majority and random baselines.'
+  next_action: 'Advance to P24 audio-text alignment and speech after GitHub merge and synchronization.'

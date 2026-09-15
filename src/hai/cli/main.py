@@ -31,6 +31,8 @@ from hai.graph.store import GraphError, GraphStore
 from hai.graph.store import self_test as graph_self_test
 from hai.memory.store import MemoryError, MemoryStore
 from hai.memory.store import self_test as memory_self_test
+from hai.models.audio import AudioError, evaluate_audio, train_audio
+from hai.models.audio import data_verify as audio_data_verify
 from hai.models.fusion import FusionError, evaluate_fusion, train_fusion
 from hai.models.fusion import data_verify as fusion_data_verify
 from hai.models.gnn import (
@@ -412,6 +414,18 @@ def main() -> int:
     fusion_evaluate.add_argument(
         "--config", type=Path, default=Path("configs/models/fusion.yaml")
     )
+    audio = sub.add_parser("audio", help="train and evaluate a scratch audio specialist")
+    audio_sub = audio.add_subparsers(dest="audio_command", required=True)
+    audio_data = audio_sub.add_parser("data-verify", help="verify procedural waveform provenance")
+    audio_data.add_argument("--config", type=Path, default=Path("configs/models/audio.yaml"))
+    audio_train = audio_sub.add_parser("train", help="train the audio specialist from scratch")
+    audio_train.add_argument("--config", type=Path, default=Path("configs/models/audio.yaml"))
+    audio_train.add_argument(
+        "--task", choices=("sound-classification",), default="sound-classification"
+    )
+    audio_evaluate = audio_sub.add_parser("evaluate", help="evaluate audio on held-out waveforms")
+    audio_evaluate.add_argument("--config", type=Path, default=Path("configs/models/audio.yaml"))
+    audio_evaluate.add_argument("--split", choices=("validation", "test"), default="validation")
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
@@ -599,6 +613,26 @@ def main() -> int:
             )
             print(json.dumps(result, indent=2, sort_keys=True))
         except (MultimodalError, FusionError, OSError, KeyError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
+        return 0
+    if args.command == "audio":
+        try:
+            if args.audio_command == "data-verify":
+                result = audio_data_verify(args.config)
+            elif args.audio_command == "train":
+                result = train_audio(args.config, Path.cwd())
+            elif args.audio_command == "evaluate":
+                result = evaluate_audio(args.config, Path.cwd(), args.split)
+            else:
+                return 2
+            result["tracking"] = log_cli_run(
+                f"audio-{args.audio_command}",
+                result,
+                tags={"phase": "P23", "command": f"audio-{args.audio_command}"},
+                params={"split": getattr(args, "split", "none")},
+            )
+            print(json.dumps(result, indent=2, sort_keys=True))
+        except (AudioError, OSError, KeyError, json.JSONDecodeError) as exc:
             parser.error(str(exc))
         return 0
     if args.command == "retrieval":
