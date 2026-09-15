@@ -54,6 +54,10 @@ from hai.models.multimodal import (
     train_alignment,
 )
 from hai.models.multimodal import data_verify as multimodal_data_verify
+from hai.models.speech import SpeechError, evaluate_asr, train_asr
+from hai.models.speech import data_verify as speech_data_verify
+from hai.models.speech import evaluate_alignment as evaluate_speech_alignment
+from hai.models.speech import train_alignment as train_speech_alignment
 from hai.models.state_space import (
     StateSpaceError,
     benchmark_against_gru,
@@ -426,6 +430,29 @@ def main() -> int:
     audio_evaluate = audio_sub.add_parser("evaluate", help="evaluate audio on held-out waveforms")
     audio_evaluate.add_argument("--config", type=Path, default=Path("configs/models/audio.yaml"))
     audio_evaluate.add_argument("--split", choices=("validation", "test"), default="validation")
+    speech_data = audio_sub.add_parser(
+        "speech-data-verify", help="verify source-safe paired audio/transcript data"
+    )
+    speech_data.add_argument("--config", type=Path, default=Path("configs/models/audio.yaml"))
+    audio_alignment_train = audio_sub.add_parser(
+        "train-alignment", help="train scratch audio-text alignment"
+    )
+    audio_alignment_train.add_argument(
+        "--config", type=Path, default=Path("configs/models/audio.yaml")
+    )
+    audio_alignment_evaluate = audio_sub.add_parser(
+        "evaluate-alignment", help="evaluate audio-text alignment"
+    )
+    audio_alignment_evaluate.add_argument(
+        "--config", type=Path, default=Path("configs/models/audio.yaml")
+    )
+    audio_asr_train = audio_sub.add_parser("train-asr", help="train scratch audio recognition")
+    audio_asr_train.add_argument("--config", type=Path, default=Path("configs/models/audio.yaml"))
+    audio_asr_evaluate = audio_sub.add_parser("evaluate-asr", help="evaluate ASR WER")
+    audio_asr_evaluate.add_argument(
+        "--config", type=Path, default=Path("configs/models/audio.yaml")
+    )
+    audio_asr_evaluate.add_argument("--metric", choices=("wer",), default="wer")
     args = parser.parse_args()
     if args.command == "env-check":
         return env_check()
@@ -623,6 +650,16 @@ def main() -> int:
                 result = train_audio(args.config, Path.cwd())
             elif args.audio_command == "evaluate":
                 result = evaluate_audio(args.config, Path.cwd(), args.split)
+            elif args.audio_command == "speech-data-verify":
+                result = speech_data_verify(args.config)
+            elif args.audio_command == "train-alignment":
+                result = train_speech_alignment(args.config, Path.cwd())
+            elif args.audio_command == "evaluate-alignment":
+                result = evaluate_speech_alignment(args.config, Path.cwd())
+            elif args.audio_command == "train-asr":
+                result = train_asr(args.config, Path.cwd())
+            elif args.audio_command == "evaluate-asr":
+                result = evaluate_asr(args.config, Path.cwd())
             else:
                 return 2
             result["tracking"] = log_cli_run(
@@ -632,7 +669,7 @@ def main() -> int:
                 params={"split": getattr(args, "split", "none")},
             )
             print(json.dumps(result, indent=2, sort_keys=True))
-        except (AudioError, OSError, KeyError, json.JSONDecodeError) as exc:
+        except (AudioError, SpeechError, OSError, KeyError, json.JSONDecodeError) as exc:
             parser.error(str(exc))
         return 0
     if args.command == "retrieval":

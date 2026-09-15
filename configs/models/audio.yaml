@@ -16,3 +16,7 @@ learning_rate: 0.003
 train_fraction: 0.6
 validation_fraction: 0.2
 output_dir: artifacts/audio/audio-v1
+source_group_size: 4
+alignment_dim: 32
+alignment_steps: 60
+asr_steps: 60
