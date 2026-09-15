@@ -1,5 +1,5 @@
 project: heterogeneous-ai
-current_phase: P24
+current_phase: P25
 status: ready
 phases:
   P00:
@@ -200,14 +200,15 @@ phases:
     notes: 'Procedural waveform data verification, scratch CNN training, held-out validation, and hash-bound checkpoint evaluation passed against majority/random baselines.'
   P24:
     name: Audio-text alignment and speech
-    status: ready
+    status: passed
     depends_on:
     - P23
-    evidence: []
-    notes: ''
+    evidence:
+    - docs/experiment-reports/P24-audio-text-speech-2026-09-14.md
+    notes: 'Source-safe procedural audio-text alignment exceeded random recall, and scratch ASR reported held-out WER 0.0 across 24 validation source groups with no TRAIN overlap.'
   P25:
     name: Unified multimodal router and expert orchestration
-    status: blocked
+    status: ready
     depends_on:
     - P24
     evidence: []
